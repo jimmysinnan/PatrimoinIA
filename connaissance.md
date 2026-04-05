@@ -286,28 +286,35 @@ Obligation de vérifier que le client ne figure pas sur les listes de gel des av
 
 **Texte :** Loi PACTE 2019, CGI Art. 163 quatervicies
 
-**Plafonds de déduction (revenus 2024, déclaration 2025) :**
+**PASS 2024 : 46 368€ — PASS 2025 : 47 100€** (à revaloriser chaque année)
 
-| Statut | Plafond annuel |
-|---|---|
-| Salarié | 10% des revenus professionnels N-1, plafonné à 10% de 8 PASS (= ~35 194€ en 2024) |
-| TNS / Chef d'entreprise | 10% du bénéfice imposable + 15% sur fraction entre 1 et 8 PASS (= jusqu'à ~85 780€ en 2024) |
-| Plancher | 10% du PASS (= ~4 399€ en 2024) |
+**Plafonds de déduction — le plus élevé des deux :**
 
-**PASS 2024 : 46 368€ / PASS 2025 : 47 100€**
+| Statut | Plafond annuel | Plancher |
+|---|---|---|
+| Salarié | 10% revenus pro N-1, plafonné à 10% × 8 PASS = **37 680€** (2025) | 10% PASS = ~4 710€ |
+| TNS / Chef d'entreprise | 10% bénéfice + 15% fraction 1→8 PASS = jusqu'à **~85 780€** | Idem |
+
+**Astuce :** Le plafond disponible figure sur l'**avis d'imposition** (cases 6PS/6PT/6PU). Mutualisable entre époux/PACS (case 6QR). Les abondements employeur PERECO ont leur propre plafond (300% du versement salarié, limité à 16% du PASS).
 
 **Fiscalité en phase d'épargne :**
-- Versements volontaires déductibles du revenu imposable (dans la limite du plafond)
-- Option : versements non déductibles pour sortie en capital exonérée d'IR
+- Versements déductibles : gain immédiat = TMI × montant versé
+- Capitalisation exonérée d'IR pendant la phase d'accumulation
+- **Pas de prélèvements sociaux** annuels sur les PER assurantiels (avantage vs fonds euros AV)
+- Option versements non déductibles : sortie en capital exonérée d'IR
 
 **Fiscalité à la sortie :**
 
 | Type de sortie | Versements déduits | Versements non déduits |
 |---|---|---|
-| Capital | IR sur capital + PS 17,2% sur plus-values | Exonéré IR + PS 17,2% sur plus-values |
-| Rente | IR après abattement de 10% (comme pension) + PS 10,1% | Rente viagère à titre onéreux (RVTO) — PS + IR sur fraction selon âge |
+| **Capital** | IR barème sur capital + PFU 30% sur PV | Exonéré IR + PFU 30% sur PV |
+| **Rente** | IR pensions (abattement 10%) + PS 17,2% sur fraction imposable | RVTO — fraction imposable selon âge + PS |
 
-**Cas de déblocage anticipé :** Décès conjoint/partenaire PACS, invalidité 2e/3e catégorie, surendettement, expiration droits chômage, liquidation judiciaire, acquisition résidence principale (sauf PER obligatoire entreprise).
+**Décès avant retraite (PER assurantiel) :**
+- Avant 70 ans : abattement **152 500€/bénéficiaire** (art. 990 I CGI — même régime que AV)
+- Après 70 ans : abattement global **30 500€** + droits de succession sur surplus (art. 757 B CGI)
+
+**Cas de déblocage anticipé :** Décès conjoint/PACS, invalidité 2e/3e catégorie, surendettement, fin droits chômage, liquidation judiciaire, acquisition résidence principale (sauf PERO). En cas de déblocage anticipé exceptionnel : exonération totale IR + PS sur capital, PFU sur PV.
 
 ### 5.2 Assurance-vie
 
