@@ -1,0 +1,2471 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PatrimonIA – Bilan Patrimonial Automatisé</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f4ef;
+  --bg2: #ffffff;
+  --bg3: #eeebe4;
+  --bg4: #e4e0d8;
+  --border: rgba(0,0,0,0.07);
+  --border-md: rgba(0,0,0,0.13);
+  --text: #1a1814;
+  --text2: #6b6457;
+  --text3: #a39d92;
+  --navy: #1a2f4e;
+  --navy-bg: rgba(26,47,78,0.06);
+  --navy-bord: rgba(26,47,78,0.18);
+  --gold: #9a7c38;
+  --gold2: #c4a050;
+  --gold-bg: rgba(154,124,56,0.08);
+  --gold-bord: rgba(154,124,56,0.22);
+  --green: #2d6a4f;
+  --green-bg: rgba(45,106,79,0.07);
+  --green-bord: rgba(45,106,79,0.2);
+  --red: #9b2335;
+  --red-bg: rgba(155,35,53,0.07);
+  --red-bord: rgba(155,35,53,0.2);
+  --amber: #c07020;
+  --amber-bg: rgba(192,112,32,0.08);
+  --amber-bord: rgba(192,112,32,0.2);
+  --violet: #4a3580;
+  --violet-bg: rgba(74,53,128,0.07);
+  --r: 14px;
+  --rs: 8px;
+  --serif: 'Cormorant Garamond', serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.09);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--navy);
+  padding: 0 32px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; gap: 14px; }
+.logo-mark {
+  width: 36px; height: 36px;
+  background: var(--gold-bg);
+  border: 1px solid var(--gold-bord);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.logo-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: .3px;
+  font-style: italic;
+}
+.logo-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 1px; }
+.header-pills { display: flex; gap: 7px; align-items: center; }
+.hpill {
+  font-size: 11px; font-weight: 500;
+  padding: 4px 11px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.55);
+}
+.hpill.gold {
+  background: var(--gold-bg);
+  border-color: var(--gold-bord);
+  color: var(--gold2);
+  display: flex; align-items: center; gap: 5px;
+}
+.gpulse { width: 6px; height: 6px; border-radius: 50%; background: var(--gold2); animation: gp 2s infinite; }
+@keyframes gp { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ===== TABS ===== */
+.tabs {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  overflow-x: auto;
+}
+.tab {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  color: var(--text3); background: none; border: none;
+  border-bottom: 2px solid transparent;
+  padding: 13px 16px; cursor: pointer; transition: all .15s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+
+/* ===== MAIN ===== */
+.main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
+.panel { display: none; }
+.panel.active { display: block; animation: fu .25s ease; }
+@keyframes fu { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ===== PANEL 1: GÉNÉRATION ===== */
+.gen-layout { display: grid; grid-template-columns: 340px 1fr; gap: 22px; align-items: start; }
+
+/* Formulaire client */
+.form-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.fc-head {
+  padding: 14px 18px;
+  background: var(--navy);
+  color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.fc-title { font-family: var(--serif); font-size: 17px; font-weight: 600; font-style: italic; }
+.fc-badge {
+  font-size: 10px; font-weight: 600;
+  background: rgba(255,255,255,0.12);
+  padding: 3px 9px; border-radius: 10px;
+  letter-spacing: .04em;
+}
+.fc-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fl {
+  font-size: 11px; font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.fi, .fs {
+  background: var(--bg3);
+  border: 1px solid var(--border-md);
+  border-radius: var(--rs);
+  padding: 8px 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+}
+.fi:focus, .fs:focus { border-color: var(--gold-bord); }
+
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.actifs-section {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--rs);
+  overflow: hidden;
+}
+.as-head {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px; font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  background: var(--bg4);
+}
+.as-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px; color: var(--text2);
+}
+.as-row:last-child { border-bottom: none; }
+.as-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.as-lbl { flex: 1; }
+.as-input {
+  width: 90px;
+  background: var(--bg2);
+  border: 1px solid var(--border-md);
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  outline: none;
+  text-align: right;
+}
+.as-input:focus { border-color: var(--gold-bord); }
+.as-unit { font-size: 10px; color: var(--text3); min-width: 20px; }
+
+.gen-btn {
+  width: 100%;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--rs);
+  padding: 13px;
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  font-style: italic;
+  cursor: pointer;
+  transition: all .15s;
+  margin-top: 4px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.gen-btn:hover { background: #0f1e33; }
+.gen-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* BILAN RÉSULTAT */
+.bilan-wrap {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  min-height: 600px;
+}
+
+/* Bilan header */
+.bilan-head {
+  background: var(--navy);
+  padding: 20px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.bilan-head-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.bilan-client-name {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: .2px;
+}
+.bilan-date { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+.bilan-ref {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold2);
+  background: rgba(196,160,80,0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(196,160,80,0.2);
+}
+
+/* Totaux */
+.bilan-totaux {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.bilan-total-item {}
+.bt-label {
+  font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+.bt-val {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.bt-val.gold { color: var(--gold2); }
+.bt-val.green { color: #6ee7b7; }
+.bt-val.red { color: #fca5a5; }
+.bt-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 3px; }
+
+/* Bilan body */
+.bilan-body { padding: 22px 28px; }
+
+/* Tables actif/passif */
+.bilans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+
+.bilan-table-section {}
+.bts-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.bts-total {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text3);
+  margin-left: auto;
+}
+
+.bt {
+  width: 100%;
+  border-collapse: collapse;
+}
+.bt th {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text3);
+  text-align: left;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  font-weight: 600;
+}
+.bt th:last-child { text-align: right; }
+.bt td {
+  padding: 9px 10px;
+  font-size: 13px;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.bt tr:last-child td { border-bottom: none; }
+.bt td:last-child {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+.bt-dot { display: inline-flex; align-items: center; gap: 7px; }
+.bt-dot-c { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* Total row */
+.bt-tot td {
+  font-weight: 700;
+  color: var(--navy) !important;
+  background: var(--bg3);
+  font-size: 13px !important;
+}
+
+/* Répartition */
+.repartition-section { margin-bottom: 20px; }
+.section-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.rep-bars { display: flex; flex-direction: column; gap: 8px; }
+.rep-row { display: flex; align-items: center; gap: 12px; }
+.rep-lbl { font-size: 12px; color: var(--text2); min-width: 140px; display: flex; align-items: center; gap: 7px; }
+.rep-bar-track { flex: 1; height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+.rep-bar-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+.rep-pct { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 36px; text-align: right; }
+.rep-val { font-family: var(--mono); font-size: 11px; color: var(--text2); min-width: 80px; text-align: right; }
+
+/* Alertes */
+.alertes-section { margin-bottom: 20px; }
+.alertes-grid { display: flex; flex-direction: column; gap: 8px; }
+.alerte-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: var(--rs);
+  border: 1px solid;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.alerte-item.opportunite { background: var(--gold-bg); border-color: var(--gold-bord); }
+.alerte-item.attention { background: var(--amber-bg); border-color: var(--amber-bord); }
+.alerte-item.risque { background: var(--red-bg); border-color: var(--red-bord); }
+.alerte-icon { font-size: 16px; flex-shrink: 0; }
+.alerte-content {}
+.alerte-title { font-weight: 600; color: var(--text); margin-bottom: 2px; font-size: 13px; }
+.alerte-desc { color: var(--text2); font-size: 12px; }
+
+/* Analyse CGP */
+.analyse-section {}
+.analyse-box {
+  background: var(--navy-bg);
+  border: 1px solid var(--navy-bord);
+  border-radius: var(--rs);
+  padding: 16px 18px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.analyse-title { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+
+/* Pipeline génération */
+.pipeline-wrap {
+  display: flex; flex-direction: column; gap: 0;
+}
+.pipe-step {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background .2s;
+}
+.pipe-step:last-child { border-bottom: none; }
+.pipe-step.running { background: var(--navy-bg); }
+.pipe-step.done { background: var(--green-bg); }
+
+.pipe-icon {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0; margin-top: 1px;
+  transition: all .3s;
+}
+.pi-idle { background: var(--bg3); }
+.pi-running { background: var(--navy-bg); animation: spin 1s linear infinite; }
+.pi-done { background: var(--green-bg); }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.pipe-content { flex: 1; }
+.pipe-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.pipe-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.pipe-out { font-family: var(--mono); font-size: 11px; color: var(--green); margin-top: 5px; display: none; }
+.pipe-out.show { display: block; animation: fu .2s ease; }
+.pipe-time { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+/* Placeholder */
+.placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 400px;
+  color: var(--text3);
+  gap: 12px;
+}
+.placeholder-icon { font-size: 40px; opacity: .4; }
+.placeholder-text { font-family: var(--serif); font-size: 18px; font-style: italic; }
+.placeholder-sub { font-size: 13px; }
+
+/* ===== PANEL 2: SCÉNARIO MAKE ===== */
+.scenario-layout { display: grid; grid-template-columns: 260px 1fr; gap: 22px; }
+.snav { display: flex; flex-direction: column; position: sticky; top: 14px; height: fit-content; }
+.sni { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; cursor: pointer; transition: opacity .15s; }
+.sni:not(.active) { opacity: .4; }
+.snc { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border-md); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; transition: all .2s; font-family: var(--serif); }
+.sni.active .snc { border-color: var(--gold); background: var(--gold-bg); color: var(--gold); }
+.sni.done .snc { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+.snconn { width: 1px; height: 18px; background: var(--border); margin-left: 14px; }
+.sntitle { font-size: 13px; font-weight: 600; margin-top: 5px; }
+.snsub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+.scc { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; min-height: 500px; display: flex; flex-direction: column; }
+.sch { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.sctag { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+.sctitle { font-family: var(--serif); font-size: 22px; font-weight: 700; letter-spacing: -.2px; margin-bottom: 8px; }
+.scdesc { font-size: 13px; color: var(--text2); line-height: 1.6; max-width: 540px; }
+.scbody { padding: 22px 24px; flex: 1; display: flex; flex-direction: column; }
+.cfg { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+.cfg th { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--bg3); font-weight: 600; }
+.cfg td { padding: 10px 12px; font-size: 13px; color: var(--text2); border-bottom: 1px solid var(--border); vertical-align: top; }
+.cfg tr:last-child td { border-bottom: none; }
+.cfg td:first-child { color: var(--text); font-weight: 600; }
+.mono-val { font-family: var(--mono); font-size: 11px; background: var(--bg3); border: 1px solid var(--border-md); border-radius: 4px; padding: 2px 7px; color: var(--gold); display: inline; }
+.tip { display: flex; gap: 10px; padding: 12px 14px; background: var(--gold-bg); border: 1px solid var(--gold-bord); border-radius: var(--rs); font-size: 12px; color: var(--text2); line-height: 1.5; align-items: flex-start; }
+.scfoot { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-top: 1px solid var(--border); margin-top: auto; }
+.scprog { font-size: 12px; color: var(--text3); }
+.bprev, .bnext { font-family: var(--sans); font-size: 13px; padding: 8px 18px; border-radius: var(--rs); cursor: pointer; transition: all .12s; }
+.bprev { background: none; border: 1px solid var(--border-md); color: var(--text2); }
+.bprev:hover { color: var(--text); }
+.bprev:disabled { opacity: .3; cursor: not-allowed; }
+.bnext { background: var(--navy); border: none; color: #fff; font-weight: 600; }
+.bnext:hover { background: #0f1e33; }
+.bnext:disabled { opacity: .3; cursor: not-allowed; }
+
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+@media (max-width: 900px) { .gen-layout, .scenario-layout, .bilans-grid { grid-template-columns: 1fr; } .snav { display: none; } .bilan-totaux { grid-template-columns: 1fr; } }
+
+/* ===== PRINT / TÉLÉCHARGEMENT ===== */
+@media print {
+  body { background: #fff !important; }
+  .header, .tabs, .form-card, #pipeline, .placeholder,
+  .no-print { display: none !important; }
+  .main { padding: 0 !important; max-width: 100% !important; }
+  .gen-layout { grid-template-columns: 1fr !important; }
+  .bilan-wrap { box-shadow: none !important; border: none !important; }
+  .bilan-head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .bt-val, .score-pill, .statut-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .panel { display: block !important; }
+  #tab-scenario, #tab-conformite, #tab-copilot { display: none !important; }
+  .bilan-actions { display: none !important; }
+  @page { margin: 15mm 12mm; }
+  .ia-mention { display: none !important; }
+}
+.ia-mention.hidden { display: none !important; }
+
+/* Synthèse éditable */
+.synthese-editable {
+  width: 100%;
+  min-height: 120px;
+  background: transparent;
+  border: none;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  padding: 0;
+}
+.synthese-editable:focus {
+  background: var(--bg3);
+  border-radius: var(--rs);
+  padding: 8px;
+  margin: -8px;
+}
+.edit-toggle-btn {
+  font-family: var(--sans);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-md);
+  background: var(--bg3);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .12s;
+}
+.edit-toggle-btn:hover { background: var(--bg4); }
+.edit-toggle-btn.editing { border-color: var(--gold-bord); background: var(--gold-bg); color: var(--gold); }
+
+/* Badges origine données */
+.origine-badge {
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  padding: 3px 9px; border-radius: 10px; border: 1px solid;
+}
+.ob-saisie  { background: var(--navy-bg);  border-color: var(--navy-bord);  color: var(--navy); }
+.ob-doc     { background: var(--violet-bg); border-color: rgba(74,53,128,.2); color: var(--violet); }
+.ob-crm     { background: var(--green-bg); border-color: var(--green-bord); color: var(--green); }
+.ob-manquant{ background: var(--red-bg);   border-color: var(--red-bord);   color: var(--red); }
+
+/* Score complétude */
+.completude-wrap {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--rs);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.completude-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.completude-title { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--navy); }
+.completude-score-big {
+  font-family: var(--serif); font-size: 28px; font-weight: 700; line-height: 1;
+}
+.completude-track { height: 7px; background: var(--bg4); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+.completude-fill  { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+.completude-subs  { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.csub { display: flex; align-items: center; gap: 8px; }
+.csub-lbl { font-size: 11px; color: var(--text2); flex: 1; }
+.csub-track { width: 50px; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.csub-fill  { height: 100%; border-radius: 2px; }
+.csub-pct   { font-family: var(--mono); font-size: 10px; color: var(--text3); min-width: 28px; text-align: right; }
+
+/* Points à valider */
+.ptv-wrap {
+  border: 1px solid var(--amber-bord);
+  background: var(--amber-bg);
+  border-radius: var(--rs);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.ptv-head {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--amber-bord);
+  display: flex; align-items: center; gap: 8px;
+}
+.ptv-title { font-size: 13px; font-weight: 700; color: var(--amber); flex: 1; }
+.ptv-count { font-family: var(--mono); font-size: 11px; background: rgba(192,112,32,.15); border: 1px solid var(--amber-bord); border-radius: 10px; padding: 2px 8px; color: var(--amber); }
+.ptv-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--amber-bord);
+  font-size: 12px;
+}
+.ptv-item:last-child { border-bottom: none; }
+.ptv-cb {
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 1.5px solid var(--amber);
+  background: #fff; flex-shrink: 0; margin-top: 1px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--amber); transition: all .15s;
+}
+.ptv-cb.checked { background: var(--amber); color: #fff; }
+.ptv-lbl { flex: 1; color: var(--text2); line-height: 1.4; }
+.ptv-lbl.done { text-decoration: line-through; color: var(--text3); }
+.ptv-priority { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.ptv-p1 { color: var(--red); }
+.ptv-p2 { color: var(--amber); }
+
+/* Préparation RDV */
+.rdv-wrap {
+  border: 1px solid var(--navy-bord);
+  background: var(--navy-bg);
+  border-radius: var(--rs);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.rdv-head { padding: 10px 14px; border-bottom: 1px solid var(--navy-bord); display: flex; align-items: center; gap: 8px; }
+.rdv-title { font-size: 13px; font-weight: 700; color: var(--navy); }
+.rdv-body  { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.rdv-line  { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--text2); line-height: 1.5; }
+.rdv-bullet { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 6px; }
+.rdv-questions { padding: 10px 14px; border-top: 1px solid var(--navy-bord); background: rgba(26,47,78,.04); }
+.rdv-qlabel { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); margin-bottom: 7px; }
+.rdv-q { display: flex; gap: 7px; align-items: flex-start; font-size: 12px; color: var(--text2); margin-bottom: 5px; }
+.rdv-q:last-child { margin-bottom: 0; }
+.rdv-qi { font-family: var(--serif); font-size: 13px; color: var(--gold); font-style: italic; flex-shrink: 0; }
+
+/* ===== COPILOT IA ===== */
+.copilot-layout { display: grid; grid-template-columns: 220px 1fr; gap: 22px; height: calc(100vh - 160px); min-height: 500px; }
+.copilot-sidebar {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); box-shadow: var(--shadow);
+  overflow: hidden; display: flex; flex-direction: column;
+}
+.cop-shead { padding: 14px 16px; background: var(--navy); color: #fff; }
+.cop-stitle { font-family: var(--serif); font-size: 16px; font-weight: 600; font-style: italic; }
+.cop-ssub   { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 2px; }
+.cop-prompts { padding: 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.cop-prompt-btn {
+  text-align: left; padding: 9px 12px;
+  background: var(--bg3); border: 1px solid var(--border-md);
+  border-radius: var(--rs); font-family: var(--sans); font-size: 12px;
+  color: var(--text2); cursor: pointer; transition: all .12s; line-height: 1.4;
+}
+.cop-prompt-btn:hover { background: var(--gold-bg); border-color: var(--gold-bord); color: var(--gold); }
+.cop-prompt-btn.active { background: var(--navy-bg); border-color: var(--navy-bord); color: var(--navy); font-weight: 600; }
+.cop-sep { height: 1px; background: var(--border); margin: 4px 0; }
+.cop-context {
+  padding: 10px 12px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text3);
+}
+.cop-ctx-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: gp 2s infinite; }
+
+.copilot-main {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.cop-chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.cop-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; color: var(--text3); gap: 12px;
+}
+.cop-empty-icon { font-size: 36px; opacity: .3; }
+.cop-empty-text { font-family: var(--serif); font-size: 17px; font-style: italic; }
+.cop-empty-sub  { font-size: 12px; max-width: 300px; text-align: center; line-height: 1.6; }
+
+.cop-msg { display: flex; gap: 10px; align-items: flex-start; animation: fu .2s ease; }
+.cop-msg.user { flex-direction: row-reverse; }
+.cop-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+}
+.av-user { background: var(--navy); color: #fff; font-weight: 700; font-size: 10px; }
+.av-ai   { background: var(--gold-bg); border: 1px solid var(--gold-bord); color: var(--gold); }
+.cop-bubble {
+  max-width: 76%; padding: 10px 14px; border-radius: 12px;
+  font-size: 13px; line-height: 1.6; color: var(--text);
+}
+.cop-msg.user .cop-bubble { background: var(--navy); color: #fff; border-radius: 12px 4px 12px 12px; }
+.cop-msg.ai   .cop-bubble { background: var(--bg3); border: 1px solid var(--border); border-radius: 4px 12px 12px 12px; }
+.cop-bubble ul { margin: 6px 0 0 16px; }
+.cop-bubble li { margin-bottom: 4px; }
+.cop-bubble strong { color: var(--navy); }
+
+.cop-typing { display: flex; gap: 4px; align-items: center; padding: 10px 14px; }
+.cop-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); animation: typing 1.2s infinite; }
+.cop-dot:nth-child(2) { animation-delay: .2s; }
+.cop-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typing { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+.cop-input-wrap { padding: 14px 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+.cop-input {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border-md);
+  border-radius: var(--rs); padding: 9px 14px;
+  font-family: var(--sans); font-size: 13px; color: var(--text); outline: none;
+}
+.cop-input:focus { border-color: var(--gold-bord); }
+.cop-send {
+  background: var(--navy); border: none; border-radius: var(--rs);
+  padding: 9px 18px; color: #fff; font-family: var(--sans); font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: background .12s;
+}
+.cop-send:hover { background: #0f1e33; }
+
+/* ===== MODULE CONFORMITÉ ===== */
+.conf-layout { display: grid; grid-template-columns: 1fr 380px; gap: 22px; align-items: start; }
+
+/* KPI bar */
+.conf-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+.ckpi {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.ckpi-val {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.ckpi-val.green { color: var(--green); }
+.ckpi-val.amber { color: var(--amber); }
+.ckpi-val.red   { color: var(--red); }
+.ckpi-val.navy  { color: var(--navy); }
+.ckpi-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); }
+
+/* Tableau dossiers */
+.dossiers-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.dc-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg3);
+}
+.dc-title { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--navy); }
+.dc-search {
+  background: var(--bg2);
+  border: 1px solid var(--border-md);
+  border-radius: var(--rs);
+  padding: 6px 12px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  width: 180px;
+}
+.dc-search:focus { border-color: var(--gold-bord); }
+
+.dt { width: 100%; border-collapse: collapse; }
+.dt th {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--text3); font-weight: 600;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  text-align: left;
+}
+.dt td {
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.dt tr:last-child td { border-bottom: none; }
+.dt tr.dr-row { cursor: pointer; transition: background .12s; }
+.dt tr.dr-row:hover { background: var(--gold-bg); }
+.dt tr.dr-row.selected { background: var(--navy-bg); }
+
+.score-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid;
+}
+.sp-green { background: var(--green-bg); border-color: var(--green-bord); color: var(--green); }
+.sp-amber { background: var(--amber-bg); border-color: var(--amber-bord); color: var(--amber); }
+.sp-red   { background: var(--red-bg);   border-color: var(--red-bord);   color: var(--red); }
+
+.score-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.score-bar-track { width: 60px; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 3px; }
+
+.statut-badge {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  padding: 3px 8px; border-radius: 10px;
+}
+.sb-ok  { background: var(--green-bg); color: var(--green); }
+.sb-warn { background: var(--amber-bg); color: var(--amber); }
+.sb-ko  { background: var(--red-bg); color: var(--red); }
+
+/* Panneau dossier detail */
+.detail-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  position: sticky;
+  top: 14px;
+}
+.detail-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 300px; color: var(--text3); gap: 10px;
+  padding: 30px;
+}
+.detail-empty-icon { font-size: 32px; opacity: .35; }
+.detail-empty-text { font-family: var(--serif); font-size: 16px; font-style: italic; }
+
+.det-head {
+  padding: 16px 18px;
+  background: var(--navy);
+  color: #fff;
+}
+.det-name { font-family: var(--serif); font-size: 20px; font-weight: 600; margin-bottom: 2px; }
+.det-meta { font-size: 11px; color: rgba(255,255,255,0.45); }
+.det-score-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.det-score-big {
+  font-family: var(--serif); font-size: 38px; font-weight: 700; line-height: 1;
+}
+.det-score-track { flex: 1; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden; }
+.det-score-fill { height: 100%; border-radius: 3px; transition: width .8s cubic-bezier(.4,0,.2,1); }
+.det-score-lbl { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 3px; }
+
+/* Checklist */
+.det-body { max-height: 520px; overflow-y: auto; }
+.checklist-section { border-bottom: 1px solid var(--border); }
+.cls-head {
+  padding: 10px 16px;
+  background: var(--bg3);
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--text2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cls-prog { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+.cl-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.cl-item:last-child { border-bottom: none; }
+.cl-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+.ci-ok   { background: var(--green-bg); color: var(--green); }
+.ci-warn { background: var(--amber-bg); color: var(--amber); }
+.ci-ko   { background: var(--red-bg);   color: var(--red); }
+.ci-na   { background: var(--bg3);      color: var(--text3); }
+.cl-lbl  { flex: 1; color: var(--text2); }
+.cl-lbl.manquant { color: var(--red); font-weight: 600; }
+.cl-lbl.expire   { color: var(--amber); }
+.cl-date { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.cl-date.soon    { color: var(--amber); font-weight: 700; }
+.cl-date.expired { color: var(--red);   font-weight: 700; }
+
+/* Alertes expiration */
+.exp-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-top: 18px;
+}
+.exp-head {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--red-bg);
+  display: flex; align-items: center; gap: 8px;
+}
+.exp-title { font-size: 13px; font-weight: 700; color: var(--red); }
+.exp-count { font-family: var(--mono); font-size: 11px; background: var(--red-bg); border: 1px solid var(--red-bord); border-radius: 10px; padding: 2px 8px; color: var(--red); }
+.exp-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.exp-row:last-child { border-bottom: none; }
+.exp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.exp-client { font-weight: 600; color: var(--text); flex: 1; }
+.exp-doc { color: var(--text2); }
+.exp-days { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 8px; }
+.exp-days.urgent  { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-bord); }
+.exp-days.warning { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bord); }
+
+/* Audit trail */
+.audit-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-top: 18px;
+}
+.audit-head {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.audit-title { font-size: 13px; font-weight: 700; color: var(--navy); }
+.audit-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.audit-row:last-child { border-bottom: none; }
+.audit-time { font-family: var(--mono); font-size: 10px; color: var(--text3); min-width: 110px; padding-top: 1px; }
+.audit-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.audit-txt { color: var(--text2); line-height: 1.4; }
+.audit-actor { color: var(--text3); font-size: 11px; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">⚖</div>
+    <div>
+      <div class="logo-title">PatrimonIA</div>
+      <div class="logo-sub">Bilan patrimonial automatisé · CGP · Family Office</div>
+    </div>
+  </div>
+  <div class="header-pills">
+    <span class="hpill">MIF2 conforme</span>
+    <span class="hpill">Claude API</span>
+    <span class="hpill">Make</span>
+    <span class="hpill gold"><div class="gpulse"></div>IA active</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="sw('gen', this)">⚡ Génération live</button>
+  <button class="tab" onclick="sw('scenario', this)">⚙ Scénario technique</button>
+  <button class="tab" onclick="sw('conformite', this)">✓ Conformité dossiers</button>
+  <button class="tab" onclick="sw('copilot', this)">✦ Copilot IA</button>
+</div>
+
+<div class="main">
+
+<!-- ===== GÉNÉRATION ===== -->
+<div class="panel active" id="tab-gen">
+  <div class="gen-layout">
+
+    <!-- FORMULAIRE -->
+    <div class="form-card">
+      <div class="fc-head">
+        <div class="fc-title">Fiche client</div>
+        <div class="fc-badge">Données simulées</div>
+      </div>
+      <div class="fc-body">
+
+        <div class="fgrid">
+          <div class="fg">
+            <label class="fl">Prénom</label>
+            <input class="fi" id="f-prenom" value="Philippe"/>
+          </div>
+          <div class="fg">
+            <label class="fl">Nom</label>
+            <input class="fi" id="f-nom" value="Marchand"/>
+          </div>
+        </div>
+
+        <div class="fgrid">
+          <div class="fg">
+            <label class="fl">Âge</label>
+            <input class="fi" id="f-age" type="number" value="52"/>
+          </div>
+          <div class="fg">
+            <label class="fl">Situation</label>
+            <select class="fs" id="f-sit">
+              <option>Marié(e)</option>
+              <option>Pacsé(e)</option>
+              <option>Célibataire</option>
+              <option>Divorcé(e)</option>
+              <option>Veuf/Veuve</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Profession</label>
+          <select class="fs" id="f-prof">
+            <option>Chef d'entreprise</option>
+            <option>Cadre supérieur</option>
+            <option>Profession libérale</option>
+            <option>TNS / Indépendant</option>
+            <option>Salarié</option>
+            <option>Retraité</option>
+          </select>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Objectif principal</label>
+          <select class="fs" id="f-obj">
+            <option>Préparer la retraite</option>
+            <option>Optimiser la fiscalité</option>
+            <option>Transmettre le patrimoine</option>
+            <option>Générer des revenus complémentaires</option>
+            <option>Protéger la famille</option>
+          </select>
+        </div>
+
+        <!-- ACTIF -->
+        <div class="actifs-section">
+          <div class="as-head">Actif brut (K€)</div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#1a2f4e"></div>
+            <div class="as-lbl">Résidence principale</div>
+            <input class="as-input" id="a-rp" value="650"/>
+            <div class="as-unit">K€</div>
+          </div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#9a7c38"></div>
+            <div class="as-lbl">Immo locatif</div>
+            <input class="as-input" id="a-loc" value="380"/>
+            <div class="as-unit">K€</div>
+          </div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#2d6a4f"></div>
+            <div class="as-lbl">Assurance-vie</div>
+            <input class="as-input" id="a-av" value="290"/>
+            <div class="as-unit">K€</div>
+          </div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#4a3580"></div>
+            <div class="as-lbl">Portefeuille titres</div>
+            <input class="as-input" id="a-tit" value="180"/>
+            <div class="as-unit">K€</div>
+          </div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#c07020"></div>
+            <div class="as-lbl">SCPI / OPCI</div>
+            <input class="as-input" id="a-scpi" value="120"/>
+            <div class="as-unit">K€</div>
+          </div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#6b6457"></div>
+            <div class="as-lbl">Liquidités</div>
+            <input class="as-input" id="a-liq" value="85"/>
+            <div class="as-unit">K€</div>
+          </div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#9b2335"></div>
+            <div class="as-lbl">PER / Épargne retraite</div>
+            <input class="as-input" id="a-per" value="95"/>
+            <div class="as-unit">K€</div>
+          </div>
+        </div>
+
+        <!-- PASSIF -->
+        <div class="actifs-section">
+          <div class="as-head">Passif (K€)</div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#9b2335"></div>
+            <div class="as-lbl">Crédit immobilier RP</div>
+            <input class="as-input" id="p-rp" value="180"/>
+            <div class="as-unit">K€</div>
+          </div>
+          <div class="as-row">
+            <div class="as-dot" style="background:#c07020"></div>
+            <div class="as-lbl">Crédit investissement</div>
+            <input class="as-input" id="p-inv" value="220"/>
+            <div class="as-unit">K€</div>
+          </div>
+        </div>
+
+        <!-- Origine des données -->
+        <div class="actifs-section">
+          <div class="as-head">Origine des données</div>
+          <div style="padding:10px 12px;display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:12px;color:var(--text2)">Données personnelles</span>
+              <span class="origine-badge ob-saisie">Saisie conseiller</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:12px;color:var(--text2)">Actifs & passifs</span>
+              <span class="origine-badge ob-saisie">Saisie conseiller</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:12px;color:var(--text2)">Relevés & contrats</span>
+              <span class="origine-badge ob-doc">Document analysé</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:12px;color:var(--text2)">Historique client</span>
+              <span class="origine-badge ob-crm">Import CRM</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="gen-btn" id="gen-btn" onclick="generateBilan()">
+          ✦ Générer le bilan patrimonial
+        </button>
+
+      </div>
+    </div>
+
+    <!-- RÉSULTAT BILAN -->
+    <div class="bilan-wrap" id="bilan-wrap">
+      <div class="placeholder" id="placeholder">
+        <div class="placeholder-icon">⚖</div>
+        <div class="placeholder-text">Bilan patrimonial</div>
+        <div class="placeholder-sub">Renseignez les données client et cliquez sur Générer</div>
+      </div>
+
+      <!-- Pipeline (visible pendant génération) -->
+      <div id="pipeline" style="display:none;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg3);font-size:13px;font-weight:600;color:var(--navy);">✦ Génération en cours…</div>
+        <div class="pipeline-wrap" id="pipeline-steps"></div>
+      </div>
+
+      <!-- Bilan complet -->
+      <div id="bilan-result" style="display:none;"></div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== SCÉNARIO ===== -->
+<div class="panel" id="tab-scenario">
+  <div class="scenario-layout">
+    <div class="snav" id="snav"></div>
+    <div class="scc" id="scc"></div>
+  </div>
+</div>
+
+<!-- ===== CONFORMITÉ ===== -->
+<div class="panel" id="tab-conformite">
+
+  <!-- KPIs -->
+  <div class="conf-kpis" id="conf-kpis"></div>
+
+  <div class="conf-layout">
+    <!-- Colonne gauche : tableau dossiers + expiration + audit -->
+    <div>
+      <div class="dossiers-card">
+        <div class="dc-head">
+          <div class="dc-title">Dossiers clients</div>
+          <input class="dc-search" id="conf-search" placeholder="Rechercher un client…" oninput="filterDossiers(this.value)"/>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Conseiller</th>
+              <th>Score MIF2</th>
+              <th>Statut</th>
+              <th>Mis à jour</th>
+              <th>Alertes</th>
+            </tr>
+          </thead>
+          <tbody id="conf-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Expirations imminentes -->
+      <div class="exp-section" id="exp-section"></div>
+
+      <!-- Audit trail -->
+      <div class="audit-card" id="audit-card"></div>
+    </div>
+
+    <!-- Colonne droite : détail dossier -->
+    <div class="detail-card" id="detail-card">
+      <div class="detail-empty">
+        <div class="detail-empty-icon">📋</div>
+        <div class="detail-empty-text">Sélectionnez un dossier</div>
+        <div style="font-size:12px;color:var(--text3);">Cliquez sur un client pour voir sa checklist</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== COPILOT IA ===== -->
+<div class="panel" id="tab-copilot">
+  <div class="copilot-layout">
+
+    <!-- Sidebar prompts -->
+    <div class="copilot-sidebar">
+      <div class="cop-shead">
+        <div class="cop-stitle">Copilot PatrimonIA</div>
+        <div class="cop-ssub">Assistant métier CGP</div>
+      </div>
+      <div class="cop-prompts">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:4px;">Prompts rapides</div>
+        <button class="cop-prompt-btn" onclick="copSend('Que manque-t-il pour que ce dossier soit présentable demain ?')">Que manque-t-il pour ce dossier ?</button>
+        <button class="cop-prompt-btn" onclick="copSend('Résume-moi les 3 risques et les 3 opportunités visibles dans ce dossier.')">3 risques · 3 opportunités</button>
+        <button class="cop-prompt-btn" onclick="copSend('Prépare une synthèse de rendez-vous en 6 lignes.')">Synthèse RDV en 6 lignes</button>
+        <div class="cop-sep"></div>
+        <button class="cop-prompt-btn" onclick="copSend('Quelles questions dois-je poser pour verrouiller retraite, transmission et protection ?')">Questions à poser en séance</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quelles pistes de préconisations pourraient être explorées, sous réserve de ma validation ?')">Pistes de préconisations</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quels points de conformité MIF2 restent à matérialiser dans ce dossier ?')">Points conformité MIF2</button>
+      </div>
+      <div class="cop-context">
+        <span class="cop-ctx-dot"></span>
+        <span id="cop-ctx-lbl">Aucun dossier chargé — générez un bilan d'abord</span>
+      </div>
+    </div>
+
+    <!-- Zone chat -->
+    <div class="copilot-main">
+      <div class="cop-chat" id="cop-chat">
+        <div class="cop-empty" id="cop-empty">
+          <div class="cop-empty-icon">✦</div>
+          <div class="cop-empty-text">Copilot PatrimonIA</div>
+          <div class="cop-empty-sub">Générez un bilan dans l'onglet "Génération live" puis posez vos questions ou utilisez les prompts rapides.</div>
+        </div>
+      </div>
+      <div class="cop-input-wrap">
+        <input class="cop-input" id="cop-input" placeholder="Posez une question sur le dossier…" onkeydown="if(event.key==='Enter')copSend()"/>
+        <button class="cop-send" onclick="copSend()">Envoyer →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script>
+// ===== TABS =====
+function sw(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'scenario') renderScenario();
+  if (id === 'conformite') renderConformite();
+  if (id === 'copilot') initCopilot();
+}
+
+// ===== HELPERS =====
+const fmt = (n) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n * 1000);
+const fmtK = (n) => n.toLocaleString('fr-FR') + ' K€';
+const pct = (n, total) => ((n / total) * 100).toFixed(1) + '%';
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ===== POINTS À VALIDER =====
+function togglePtv(i) {
+  const cb  = document.getElementById('ptv' + i);
+  const lbl = document.getElementById('ptvl' + i);
+  if (!cb) return;
+  cb.classList.toggle('checked');
+  cb.textContent = cb.classList.contains('checked') ? '✓' : '\u00a0';
+  lbl.classList.toggle('done', cb.classList.contains('checked'));
+}
+
+// ===== MENTIONS IA =====
+function toggleIaMentions() {
+  const mentions = document.querySelectorAll('.ia-mention');
+  const btn = document.getElementById('ia-toggle-btn');
+  const hidden = mentions[0] && mentions[0].classList.contains('hidden');
+  mentions.forEach(el => el.classList.toggle('hidden', !hidden));
+  if (btn) {
+    btn.textContent = hidden ? '✦ Mentions IA' : '✦ Mentions IA masquées';
+    btn.classList.toggle('editing', !hidden);
+  }
+}
+
+// ===== SYNTHÈSE ÉDITABLE =====
+function toggleSynthese() {
+  const view = document.getElementById('synthese-view');
+  const edit = document.getElementById('synthese-edit');
+  const btn  = document.getElementById('edit-toggle-btn');
+  if (!view || !edit) return;
+
+  if (edit.style.display === 'none') {
+    // Passer en mode édition
+    edit.value = view.innerText;
+    view.style.display = 'none';
+    edit.style.display = 'block';
+    edit.focus();
+    btn.textContent = '✓ Sauvegarder';
+    btn.classList.add('editing');
+  } else {
+    // Sauvegarder
+    view.innerText = edit.value;
+    edit.style.display = 'none';
+    view.style.display = 'block';
+    btn.textContent = '✎ Modifier';
+    btn.classList.remove('editing');
+    // Marquer comme modifié par le conseiller
+    const footer = document.getElementById('synthese-footer');
+    if (footer && !footer.textContent.includes('Modifié')) {
+      footer.textContent = footer.textContent.replace('Document préparatoire', 'Document préparatoire · Modifié par le conseiller');
+    }
+  }
+}
+
+// ===== TÉLÉCHARGEMENT =====
+function downloadBilan() {
+  // Si la synthèse est en mode édition, la sauvegarder d'abord
+  const edit = document.getElementById('synthese-edit');
+  if (edit && edit.style.display !== 'none') toggleSynthese();
+  window.print();
+}
+
+function validerEtEnvoyer(clientName, ref) {
+  // Si la synthèse est en mode édition, la sauvegarder d'abord
+  const edit = document.getElementById('synthese-edit');
+  if (edit && edit.style.display !== 'none') toggleSynthese();
+
+  // Confirmation + info workflow
+  const confirmed = confirm(
+    `Bilan ${ref} — ${clientName}\n\n` +
+    `En production, cette action déclenche :\n` +
+    `  • Génération du PDF final\n` +
+    `  • Envoi email sécurisé au client\n` +
+    `  • Archivage SharePoint / DMS\n` +
+    `  • Log audit trail horodaté\n\n` +
+    `Pour cette démo : téléchargement du document.\n\nContinuer ?`
+  );
+  if (confirmed) window.print();
+}
+
+// ===== GÉNÉRATION =====
+const pipelineData = [
+  { icon: '📋', name: 'Extraction des données client', desc: 'CRM + documents uploadés' },
+  { icon: '📄', name: 'OCR et structuration des documents', desc: 'Relevés · Contrats · Avis d\'imposition' },
+  { icon: '🧮', name: 'Consolidation et calculs patrimoniaux', desc: 'Actif brut · Passif · Actif net · Ratios' },
+  { icon: '📊', name: 'Analyse de la répartition', desc: 'Par classe d\'actifs · Liquidité · Risque' },
+  { icon: '⚠', name: 'Détection des alertes et opportunités', desc: 'IFI · Plafonds PER · Optimisations fiscales' },
+  { icon: '✦', name: 'Rédaction de l\'analyse narrative', desc: 'Claude API · Commentaires personnalisés' },
+  { icon: '📑', name: 'Génération documents MIF2', desc: 'Adéquation · Profil de risque · Traçabilité' },
+];
+
+async function generateBilan() {
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Génération en cours…';
+
+  const prenom = document.getElementById('f-prenom').value || 'Philippe';
+  const nom = document.getElementById('f-nom').value || 'Marchand';
+  const age = parseInt(document.getElementById('f-age').value) || 52;
+  const sit = document.getElementById('f-sit').value;
+  const prof = document.getElementById('f-prof').value;
+  const obj = document.getElementById('f-obj').value;
+
+  const actifs = {
+    rp: parseFloat(document.getElementById('a-rp').value) || 650,
+    loc: parseFloat(document.getElementById('a-loc').value) || 380,
+    av: parseFloat(document.getElementById('a-av').value) || 290,
+    tit: parseFloat(document.getElementById('a-tit').value) || 180,
+    scpi: parseFloat(document.getElementById('a-scpi').value) || 120,
+    liq: parseFloat(document.getElementById('a-liq').value) || 85,
+    per: parseFloat(document.getElementById('a-per').value) || 95,
+  };
+
+  const passif = {
+    rp: parseFloat(document.getElementById('p-rp').value) || 180,
+    inv: parseFloat(document.getElementById('p-inv').value) || 220,
+  };
+
+  const totalActif = Object.values(actifs).reduce((a, b) => a + b, 0);
+  const totalPassif = Object.values(passif).reduce((a, b) => a + b, 0);
+  const actifNet = totalActif - totalPassif;
+  const tauxEndettement = ((totalPassif / totalActif) * 100).toFixed(1);
+  const ratioLiquidite = ((actifs.liq / totalActif) * 100).toFixed(1);
+
+  // Show pipeline
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('bilan-result').style.display = 'none';
+  document.getElementById('pipeline').style.display = 'block';
+
+  const stepsEl = document.getElementById('pipeline-steps');
+  stepsEl.innerHTML = pipelineData.map((s, i) => `
+    <div class="pipe-step" id="ps${i}">
+      <div class="pipe-icon pi-idle" id="pi${i}">${s.icon}</div>
+      <div class="pipe-content">
+        <div class="pipe-name">${s.name}</div>
+        <div class="pipe-desc">${s.desc}</div>
+        <div class="pipe-out" id="po${i}"></div>
+      </div>
+      <div class="pipe-time" id="pt${i}">–</div>
+    </div>
+  `).join('');
+
+  function setStep(i, state, out, time) {
+    const step = document.getElementById('ps' + i);
+    const icon = document.getElementById('pi' + i);
+    const outEl = document.getElementById('po' + i);
+    const timeEl = document.getElementById('pt' + i);
+    if (step) step.className = 'pipe-step ' + (state === 'running' ? 'running' : 'done');
+    if (icon) icon.className = 'pipe-icon pi-' + state;
+    if (out && outEl) { outEl.textContent = out; outEl.classList.add('show'); }
+    if (time && timeEl) timeEl.textContent = time;
+  }
+
+  const outputs = [
+    `✓ ${prenom} ${nom} · ${age} ans · ${prof}`,
+    `✓ 7 documents traités · 0 erreur`,
+    `✓ Actif brut : ${fmtK(totalActif)} · Actif net : ${fmtK(actifNet)}`,
+    `✓ 7 classes d'actifs · Endettement : ${tauxEndettement}%`,
+    `✓ ${actifNet > 1300 ? 3 : 2} alertes · ${actifNet > 800 ? 3 : 2} opportunités`,
+    `✓ Analyse rédigée · 342 tokens`,
+    `✓ Doc adéquation généré · En attente validation CGP`,
+  ];
+
+  const times = ['0.8s', '1.4s', '0.3s', '0.2s', '0.4s', '1.8s', '0.5s'];
+
+  for (let i = 0; i < pipelineData.length; i++) {
+    setStep(i, 'running', null, '...');
+    await wait(600 + Math.random() * 400);
+    setStep(i, 'done', outputs[i], times[i]);
+  }
+
+  await wait(400);
+
+  // Render bilan
+  document.getElementById('pipeline').style.display = 'none';
+  document.getElementById('bilan-result').style.display = 'block';
+
+  const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const ref = 'BP-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9000) + 1000);
+
+  // IFI estimation
+  const immobilierBrut = actifs.rp + actifs.loc + actifs.scpi;
+  const immobilierNet = immobilierBrut - totalPassif * 0.6;
+  const isMIF = actifNet > 800;
+  const perPlafond = Math.round(age < 60 ? (prof.includes('Chef') ? 76102 : 35194) - actifs.per * 0.15 : 0);
+
+  // Alertes
+  const alertes = [];
+  if (immobilierNet > 1300) alertes.push({ type: 'attention', icon: '⚠', title: 'Seuil IFI franchi', desc: `Patrimoine immobilier net estimé à ${fmtK(Math.round(immobilierNet))} — IFI applicable. Optimisation à envisager (déficit foncier, démembrement, SCI IS).` });
+  if (actifs.per < 150 && age < 60) alertes.push({ type: 'opportunite', icon: '💡', title: `Plafond PER sous-utilisé — ${fmtK(perPlafond)} disponibles`, desc: `Déduction fiscale disponible sur la tranche marginale. Effort d'épargne optimal avant 31/12 pour optimiser l'IR ${new Date().getFullYear()}.` });
+  if (parseFloat(ratioLiquidite) < 8) alertes.push({ type: 'attention', icon: '⚠', title: 'Liquidité insuffisante', desc: `Ratio de liquidité à ${ratioLiquidite}% — inférieur au seuil de 8% recommandé. Constituer une réserve de précaution de 6 mois de charges.` });
+  if (actifs.av > 0 && age > 50) alertes.push({ type: 'opportunite', icon: '✦', title: 'Optimisation clause bénéficiaire AV', desc: `Contrat(s) assurance-vie à ${fmtK(actifs.av)} — revoir la clause bénéficiaire en fonction de la situation familiale actuelle (${sit}).` });
+  if (actifs.tit + actifs.scpi < totalActif * 0.15) alertes.push({ type: 'opportunite', icon: '📈', title: 'Sous-exposition aux actifs de performance', desc: `Allocation aux actifs financiers et pierre-papier à ${pct(actifs.tit + actifs.scpi, totalActif)} — potentiel de diversification pour dynamiser le rendement.` });
+
+  const couleurs = {
+    rp: '#1a2f4e', loc: '#9a7c38', av: '#2d6a4f',
+    tit: '#4a3580', scpi: '#c07020', liq: '#6b6457', per: '#9b2335'
+  };
+  const labels = {
+    rp: 'Résidence principale', loc: 'Immobilier locatif', av: 'Assurance-vie',
+    tit: 'Portefeuille titres', scpi: 'SCPI / OPCI', liq: 'Liquidités', per: 'PER / Épargne retraite'
+  };
+
+  document.getElementById('bilan-result').innerHTML = `
+    <div class="bilan-head">
+      <div class="bilan-head-top">
+        <div>
+          <div class="bilan-client-name">${prenom} ${nom}</div>
+          <div class="bilan-date">Bilan patrimonial établi le ${now} · ${age} ans · ${sit} · ${prof}</div>
+        </div>
+        <div class="bilan-ref">${ref}</div>
+      </div>
+      <div class="bilan-totaux">
+        <div class="bilan-total-item">
+          <div class="bt-label">Actif brut</div>
+          <div class="bt-val gold">${fmtK(totalActif)}</div>
+          <div class="bt-sub">7 composantes</div>
+        </div>
+        <div class="bilan-total-item">
+          <div class="bt-label">Passif total</div>
+          <div class="bt-val red">${fmtK(totalPassif)}</div>
+          <div class="bt-sub">Taux endettement ${tauxEndettement}%</div>
+        </div>
+        <div class="bilan-total-item">
+          <div class="bt-label">Actif net patrimonial</div>
+          <div class="bt-val green">${fmtK(actifNet)}</div>
+          <div class="bt-sub">Liquidité ${ratioLiquidite}%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bilan-body">
+
+      <!-- SCORE COMPLÉTUDE -->
+      ${(function(){
+        const donneesScore  = (actifs.rp && actifs.av) ? 100 : 60;
+        const docScore      = 75;
+        const conformScore  = actifNet > 800 ? 80 : 90;
+        const calcScore     = 100;
+        const global = Math.round((donneesScore + docScore + conformScore + calcScore) / 4);
+        const col = global >= 85 ? 'var(--green)' : global >= 65 ? 'var(--amber)' : 'var(--red)';
+        const subs = [
+          { lbl: 'Données personnelles', v: donneesScore },
+          { lbl: 'Patrimoine & passif', v: calcScore },
+          { lbl: 'Documents reçus', v: docScore },
+          { lbl: 'Conformité', v: conformScore },
+        ];
+        return `<div class="completude-wrap no-print">
+          <div class="completude-top">
+            <div class="completude-title">Complétude du dossier</div>
+            <div class="completude-score-big" style="color:${col}">${global}%</div>
+          </div>
+          <div class="completude-track"><div class="completude-fill" style="width:0%;background:${col}" data-w="${global}"></div></div>
+          <div class="completude-subs">
+            ${subs.map(s => {
+              const c = s.v >= 85 ? 'var(--green)' : s.v >= 65 ? 'var(--amber)' : 'var(--red)';
+              return `<div class="csub">
+                <div class="csub-lbl">${s.lbl}</div>
+                <div class="csub-track"><div class="csub-fill" style="width:${s.v}%;background:${c}"></div></div>
+                <div class="csub-pct">${s.v}%</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      })()}
+
+      <!-- POINTS À VALIDER -->
+      ${(function(){
+        const pts = [];
+        if (actifNet > 1300) pts.push({ lbl: 'Vérifier l\'exposition IFI et valider la stratégie d\'optimisation retenue', p: 'p1' });
+        if (actifs.per < 150 && age < 60) pts.push({ lbl: 'Confirmer le montant de versement PER optimal pour l\'exercice en cours', p: 'p1' });
+        if (actifs.av > 0) pts.push({ lbl: 'Valider la clause bénéficiaire assurance-vie — situation familiale : ' + sit, p: 'p1' });
+        pts.push({ lbl: 'Confirmer l\'objectif prioritaire déclaré par le client : ' + obj, p: 'p2' });
+        pts.push({ lbl: 'Vérifier la cohérence de la valorisation immobilière avec les données marché locales', p: 'p2' });
+        return `<div class="ptv-wrap no-print">
+          <div class="ptv-head">
+            <span style="font-size:15px">⚑</span>
+            <span class="ptv-title">Points à valider par le conseiller</span>
+            <span class="ptv-count">${pts.length} points</span>
+          </div>
+          ${pts.map((p, i) => `
+            <div class="ptv-item">
+              <div class="ptv-cb" id="ptv${i}" onclick="togglePtv(${i})">&nbsp;</div>
+              <div class="ptv-lbl" id="ptvl${i}">${p.lbl}</div>
+              <span class="ptv-priority ptv-${p.p}">${p.p.toUpperCase()}</span>
+            </div>`).join('')}
+        </div>`;
+      })()}
+
+      <!-- PRÉPARATION RDV -->
+      ${(function(){
+        const questions = [];
+        if (obj.includes('retraite')) questions.push('Quel horizon de départ visez-vous, et avez-vous estimé vos revenus de remplacement ?');
+        if (obj.includes('fiscalité') || obj.includes('retraite')) questions.push('Quel est votre taux marginal d\'imposition — avez-vous optimisé vos versements déductibles cette année ?');
+        if (actifs.av > 0) questions.push('Votre assurance-vie est-elle fléchée sur les bons bénéficiaires compte tenu de votre situation actuelle ?');
+        if (parseFloat(tauxEndettement) > 30) questions.push('Le calendrier de remboursement de vos crédits est-il compatible avec votre projet de retraite / transmission ?');
+        questions.push('Avez-vous anticipé les droits de succession dans votre organisation patrimoniale actuelle ?');
+        const lignes = [
+          `${prenom} ${nom}, ${age} ans, ${sit}, ${prof} — patrimoine net de <strong>${fmtK(actifNet)}</strong>.`,
+          `Actif immobilier dominant à ${pct(actifs.rp + actifs.loc, totalActif)} — profil de capitalisation.`,
+          parseFloat(tauxEndettement) < 35 ? `Endettement maîtrisé (${tauxEndettement}%) — capacité d'investissement complémentaire disponible.` : `Endettement significatif (${tauxEndettement}%) — surveiller les flux et l'évolution des taux.`,
+          `Objectif déclaré : ${obj.toLowerCase()} — à mettre en cohérence avec la structure actuelle.`,
+          actifs.per < 150 && age < 60 ? `PER sous-alimenté — opportunité fiscale immédiate à adresser en séance.` : `PER correctement alimenté — maintenir les versements.`,
+        ];
+        return `<div class="rdv-wrap no-print">
+          <div class="rdv-head">
+            <span style="font-size:15px">📋</span>
+            <span class="rdv-title">Préparation rendez-vous — ${now}</span>
+          </div>
+          <div class="rdv-body">
+            ${lignes.map(l => `<div class="rdv-line"><div class="rdv-bullet"></div><div>${l}</div></div>`).join('')}
+          </div>
+          <div class="rdv-questions">
+            <div class="rdv-qlabel">Questions à poser en séance</div>
+            ${questions.slice(0,4).map(q => `<div class="rdv-q"><div class="rdv-qi">→</div><div>${q}</div></div>`).join('')}
+          </div>
+        </div>`;
+      })()}
+
+      <div class="bilans-grid">
+        <div class="bilan-table-section">
+          <div class="bts-title">Actif brut <span class="bts-total">${fmtK(totalActif)}</span></div>
+          <table class="bt">
+            <thead><tr><th>Composante</th><th>Valeur</th><th>%</th></tr></thead>
+            <tbody>
+              ${Object.entries(actifs).map(([k, v]) => `
+                <tr>
+                  <td><div class="bt-dot"><div class="bt-dot-c" style="background:${couleurs[k]}"></div>${labels[k]}</div></td>
+                  <td>${fmtK(v)}</td>
+                  <td>${pct(v, totalActif)}</td>
+                </tr>
+              `).join('')}
+              <tr class="bt-tot"><td>Total actif</td><td>${fmtK(totalActif)}</td><td>100%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bilan-table-section">
+          <div class="bts-title">Passif <span class="bts-total">${fmtK(totalPassif)}</span></div>
+          <table class="bt">
+            <thead><tr><th>Composante</th><th>Capital restant</th></tr></thead>
+            <tbody>
+              <tr><td><div class="bt-dot"><div class="bt-dot-c" style="background:#9b2335"></div>Crédit RP</div></td><td>${fmtK(passif.rp)}</td></tr>
+              <tr><td><div class="bt-dot"><div class="bt-dot-c" style="background:#c07020"></div>Crédit investissement</div></td><td>${fmtK(passif.inv)}</td></tr>
+              <tr class="bt-tot"><td>Total passif</td><td>${fmtK(totalPassif)}</td></tr>
+            </tbody>
+          </table>
+
+          <div style="margin-top:16px;">
+            <div class="bts-title" style="font-size:14px;">Ratios clés</div>
+            <table class="bt">
+              <tbody>
+                <tr><td>Taux d'endettement</td><td style="color:${parseFloat(tauxEndettement) > 40 ? '#9b2335' : '#2d6a4f'};font-weight:700;">${tauxEndettement}%</td></tr>
+                <tr><td>Ratio de liquidité</td><td style="color:${parseFloat(ratioLiquidite) < 8 ? '#c07020' : '#2d6a4f'};font-weight:700;">${ratioLiquidite}%</td></tr>
+                <tr><td>Part immobilier brut</td><td>${pct(actifs.rp + actifs.loc, totalActif)}</td></tr>
+                <tr><td>Part actifs financiers</td><td>${pct(actifs.av + actifs.tit + actifs.scpi + actifs.per, totalActif)}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="repartition-section">
+        <div class="section-title">Répartition de l'actif brut</div>
+        <div class="rep-bars">
+          ${Object.entries(actifs).map(([k, v]) => `
+            <div class="rep-row">
+              <div class="rep-lbl"><div class="bt-dot-c" style="background:${couleurs[k]};width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>${labels[k]}</div>
+              <div class="rep-bar-track"><div class="rep-bar-fill" style="width:0%;background:${couleurs[k]}" data-w="${((v/totalActif)*100).toFixed(1)}"></div></div>
+              <div class="rep-pct">${pct(v, totalActif)}</div>
+              <div class="rep-val">${fmtK(v)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="alertes-section">
+        <div class="section-title">Alertes & opportunités <span class="ia-mention">détectées par l'IA</span></div>
+        <div class="alertes-grid">
+          ${alertes.map(a => `
+            <div class="alerte-item ${a.type}">
+              <div class="alerte-icon">${a.icon}</div>
+              <div class="alerte-content">
+                <div class="alerte-title">${a.title}</div>
+                <div class="alerte-desc">${a.desc}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="analyse-section">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div class="section-title" style="margin-bottom:0">Analyse narrative <span class="ia-mention">— générée par IA, à valider par le conseiller</span></div>
+          <div style="display:flex;gap:8px;" class="no-print">
+            <button class="edit-toggle-btn" id="ia-toggle-btn" onclick="toggleIaMentions()" title="Afficher/masquer les mentions IA dans l'interface">✦ Mentions IA</button>
+            <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleSynthese()">✎ Modifier</button>
+          </div>
+        </div>
+        <div class="analyse-box">
+          <div class="analyse-title">Synthèse patrimoniale — ${prenom} ${nom}</div>
+          <div id="synthese-view" style="line-height:1.7;">M. et Mme ${nom} présentent un patrimoine global de <strong>${fmtK(totalActif)}</strong>, constitué majoritairement d'actifs immobiliers (${pct(actifs.rp + actifs.loc, totalActif)}) et d'une épargne financière diversifiée. L'actif net s'établit à <strong>${fmtK(actifNet)}</strong> après déduction du passif résiduel de ${fmtK(totalPassif)}.
+
+La structure patrimoniale reflète un profil classique de ${prof.toLowerCase()} de ${age} ans, avec une prépondérance immobilière conforme aux objectifs de capitalisation et de transmission. Le taux d'endettement de <strong>${tauxEndettement}%</strong> reste ${parseFloat(tauxEndettement) < 35 ? 'maîtrisé et compatible avec une capacité d\'investissement supplémentaire' : 'significatif et mérite une attention particulière dans la gestion des flux'}.
+
+Les priorités d'action identifiées pour l'entretien du ${now} : ${alertes.slice(0, 2).map(a => a.title.toLowerCase()).join(' ; ')}. Ces points seront développés en séance.</div>
+          <textarea id="synthese-edit" class="synthese-editable" style="display:none;"></textarea>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;align-items:center;gap:8px;">
+            <span>⚠</span>
+            <span id="synthese-footer" class="ia-mention">Document préparatoire généré par IA — à valider, compléter et signer par le conseiller habilité. Non opposable en l'état. Réf. ${ref}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bilan-actions" style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
+        <button onclick="generateBilan()" class="no-print" style="font-family:var(--sans);font-size:13px;padding:9px 18px;border-radius:var(--rs);border:1px solid var(--border-md);background:none;color:var(--text2);cursor:pointer;">↺ Régénérer</button>
+        <button onclick="downloadBilan()" class="no-print" style="font-family:var(--sans);font-size:13px;padding:9px 18px;border-radius:var(--rs);border:1px solid var(--navy-bord);background:var(--navy-bg);color:var(--navy);cursor:pointer;font-weight:600;">↓ Télécharger PDF</button>
+        <button onclick="validerEtEnvoyer('${prenom} ${nom}', '${ref}')" class="no-print" style="font-family:var(--serif);font-size:14px;font-style:italic;padding:9px 22px;border-radius:var(--rs);border:none;background:var(--navy);color:#fff;cursor:pointer;font-weight:600;">✓ Valider et envoyer au client →</button>
+      </div>
+
+    </div>
+  `;
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.rep-bar-fill, .completude-fill, .csub-fill').forEach(bar => {
+      if (bar.dataset.w) bar.style.width = bar.dataset.w + '%';
+    });
+  }, 100);
+
+  // Stocker le contexte bilan pour le Copilot
+  window._lastBilan = { prenom, nom, age, sit, prof, obj, totalActif, totalPassif, actifNet, tauxEndettement, ratioLiquidite, actifs, alertes, now };
+
+  btn.disabled = false;
+  btn.innerHTML = '✦ Générer le bilan patrimonial';
+}
+
+// ===== COPILOT IA =====
+function initCopilot() {
+  const b = window._lastBilan;
+  if (b) document.getElementById('cop-ctx-lbl').textContent = b.prenom + ' ' + b.nom + ' · ' + b.age + ' ans · ' + b.prof;
+}
+
+function copSend(preset) {
+  const input = document.getElementById('cop-input');
+  const q = preset || input.value.trim();
+  if (!q) return;
+  input.value = '';
+  // Highlight prompt actif
+  document.querySelectorAll('.cop-prompt-btn').forEach(b => b.classList.remove('active'));
+  if (preset) {
+    document.querySelectorAll('.cop-prompt-btn').forEach(b => { if (b.getAttribute('onclick').includes(preset.slice(0,20))) b.classList.add('active'); });
+  }
+
+  const chat = document.getElementById('cop-chat');
+  const empty = document.getElementById('cop-empty');
+  if (empty) empty.remove();
+
+  // Message utilisateur
+  chat.innerHTML += `<div class="cop-msg user"><div class="cop-avatar av-user">CGP</div><div class="cop-bubble">${q}</div></div>`;
+
+  // Typing indicator
+  const typingId = 'typing-' + Date.now();
+  chat.innerHTML += `<div class="cop-msg ai" id="${typingId}"><div class="cop-avatar av-ai">✦</div><div class="cop-bubble"><div class="cop-typing"><div class="cop-dot"></div><div class="cop-dot"></div><div class="cop-dot"></div></div></div></div>`;
+  chat.scrollTop = chat.scrollHeight;
+
+  const b = window._lastBilan;
+  setTimeout(() => {
+    const el = document.getElementById(typingId);
+    if (el) el.remove();
+    const rep = copilotResponse(q, b);
+    chat.innerHTML += `<div class="cop-msg ai"><div class="cop-avatar av-ai">✦</div><div class="cop-bubble">${rep}</div></div>`;
+    chat.scrollTop = chat.scrollHeight;
+  }, 1200 + Math.random() * 600);
+}
+
+// ===== BASE DE CONNAISSANCE (connaissance.md) =====
+const KB = {
+  mif2: {
+    suitability: { delaiMaj: '2 ans minimum ou changement de situation', conservation: '5 ans', esg: 'Obligatoire depuis août 2022 — 3 dimensions : investissements durables SFDR, alignement taxonomie, prise en compte PAI' },
+    frais: { exante: 'Avant la prestation — coûts totaux CGP + produit + transaction', expost: 'Annuel — en € et en % — rétrocessions incluses' },
+    categories: { nonPro: 'Par défaut particuliers — protection maximale', pro: 'Grandes entreprises ou particulier optant : 10 tx/trim sur 4 trim + portefeuille >500K€ + expérience pro finance (2/3 critères)', reclassement: 'Client informé de la perte de protection avant acceptation' },
+    sanctions: { maxPM: '100M€ ou 10% CA', maxPP: '15M€ ou quintuple profits', interdiction: 'Jusqu\'à 10 ans', publication: 'Naming & shaming sur amf-france.org' },
+    ris2025: 'Accord politique fin 2024 — transposition ~2026-2027. Points clés : test intérêt client pour rétrocessions, interdiction rétrocessions execution only, benchmarks VFM ESMA, révision KID PRIIPs'
+  },
+  dda: {
+    abe: 'Analyse des Besoins et Exigences — obligatoire avant toute proposition d\'assurance — documentée dans la fiche conseil',
+    formation: '15h/an de formation continue obligatoire pour tout distributeur IAS',
+    ipid: 'Insurance Product Information Document — fiche 2p standardisée — avant souscription non-vie',
+    conflits: 'Politique de gestion des conflits obligatoire — information client si mesures insuffisantes'
+  },
+  lcbft: {
+    vigilanceStandard: 'Identification + vérification identité + bénéficiaire effectif (>25%) + nature relation + surveillance continue',
+    vigilanceRenforcee: 'PPE, pays tiers risque élevé (liste GAFI), transactions complexes, actionnariat opaque',
+    tracfin: 'Déclaration de soupçon sans délai, sans seuil de montant, via portail Télédéclaration TRACFIN. Tipping-off interdit.',
+    conservation: '5 ans après fin de relation d\'affaires'
+  },
+  statuts: {
+    cif: { regulateur: 'AMF via associations agréées (ANACOFI-CIF, CNCGP, CNCIF)', rc: '150 000€/sinistre, 600 000€/an', activites: 'Conseil en investissements financiers, OPC, services d\'investissement' },
+    ias: { regulateur: 'ACPR', inscription: 'ORIAS', categories: 'Courtier (COA), Agent général (AGA), Mandataire', rc: '1 500 000€/sinistre (courtier)' },
+    iobsp: { regulateur: 'ACPR', inscription: 'ORIAS', activites: 'Crédit immobilier, crédit conso, services de paiement' }
+  },
+  fiscalite: {
+    per: {
+      pass2025: 47100,
+      plafondSalarie: '10% revenus N-1 plafonné à 10% × 8 PASS = ~37 680€ (2025)',
+      plafondTNS: '10% bénéfice + 15% fraction entre 1 et 8 PASS = jusqu\'à ~85 780€',
+      plancher: '10% du PASS = ~4 710€ (2025)',
+      sortieCapital: 'Versements déduits : IR + PS 17,2% sur PV. Versements non déduits : exonéré IR + PS 17,2% sur PV',
+      sortieRente: 'IR après abattement 10% + PS 10,1% (versements déduits) / RVTO selon âge (versements non déduits)',
+      deblocage: 'Décès conjoint/PACS, invalidité 2e/3e cat, surendettement, expiration droits chômage, liquidation judiciaire, achat RP'
+    },
+    av: {
+      avant8ans: 'PFU 30% (12,8% IR + 17,2% PS) ou barème IR + PS',
+      apres8ans: 'Abattement 4 600€ célibataire / 9 200€ couple sur gains, puis PFU 24,7% jusqu\'à 150K€ versements, puis 30%',
+      deces: 'Avant 70 ans : abattement 152 500€/bénéficiaire, puis 20%/31,25%. Après 70 ans : abattement global 30 500€ versements + droits de succession sur hors-intérêts',
+      conjoint: 'Exonération totale quelque soit l\'âge'
+    },
+    ifi: {
+      seuil: 1300000,
+      bareme: '0% < 800K€ | 0,5% 800K-1,3M€ | 0,7% 1,3M-2,57M€ | 1% 2,57M-5M€ | 1,25% 5M-10M€ | 1,5% >10M€',
+      exonerations: 'RP -30%, biens professionnels 100%, forêts/bois sous conditions, monuments historiques partiels',
+      optimisations: 'Démembrement, déficit foncier, SCI IS (passif déduit), investissements non imposables'
+    },
+    succession: {
+      abattements: 'Enfant 100K€ / Conjoint-PACS exonéré / Petit-enfant 31 865€ / Frère-sœur 15 932€ / Tiers 1 594€ — renouvelables 15 ans',
+      dutreil: 'Exonération 75% droits sur transmission entreprise — engagement collectif 2 ans + individuel 4 ans + fonctions direction',
+      donManuel: 'Don d\'argent exonéré 31 865€ si donateur <80 ans et bénéficiaire ≥18 ans — renouvelable 15 ans'
+    },
+    flatTax: 'PFU 30% = 12,8% IR + 17,2% PS. Option barème si TMI ≤ 11% ou revenus fonciers en déficit',
+    lmnpLF2025: 'Amortissements déduits en régime réel réintégrés dans le calcul de la plus-value à la revente depuis 01/01/2025'
+  },
+  produits: {
+    scpi: 'Rendement moyen 2024 : ~4,5-5,5% brut. Fiscalité : revenus fonciers + PV immobilière. En UC AV : fiscalité AV avantageuse',
+    eltif2: 'Depuis janvier 2024 — ouvert aux non-professionnels, liquidité partielle possible, investissements : infra, PME, immo, PE',
+    pinel: 'TERMINÉ le 31/12/2024. Denormandie (rénovation ancien) toujours actif',
+    deficitFoncier: 'Déduction revenus globaux jusqu\'à 10 700€/an (21 400€ si rénovation énergétique)'
+  },
+  evolutions2025: {
+    dora: 'Applicable janvier 2025 — résilience numérique : inventaire prestataires IT, clauses de service, plans de continuité',
+    ris: 'Accord fin 2024 — transposition 2026-2027 — Value for Money, test intérêt client, benchmarks ESMA',
+    esg: 'Contrôles AMF renforcés 2024 sur qualité des questionnaires ESG — 3 dimensions obligatoires',
+    lmnp: 'LF2025 : réintégration amortissements dans calcul PV LMNP depuis 01/01/2025'
+  }
+};
+
+function copilotResponse(q, b) {
+  if (!b) return 'Aucun dossier chargé. Générez d\'abord un bilan dans l\'onglet <strong>Génération live</strong>, puis revenez ici.';
+
+  const { prenom, nom, age, prof, obj, totalActif, actifNet, tauxEndettement, ratioLiquidite, actifs, sit } = b;
+  const ql = q.toLowerCase();
+
+  if (ql.includes('manque') || ql.includes('présentable') || ql.includes('complet')) {
+    const manques = [];
+    if (parseFloat(ratioLiquidite) < 5) manques.push('Justificatif de liquidités insuffisant — ratio à <strong>' + ratioLiquidite + '%</strong>, bien en-deçà du seuil de précaution');
+    manques.push('Avis d\'imposition N-1 à récupérer pour calcul précis du plafond PER');
+    if (actifs.av > 0) manques.push('Relevé de situation assurance-vie à jour (<strong>' + fmtK(actifs.av) + '</strong>)');
+    manques.push('Attestation de valeur vénale pour les biens locatifs — estimation à affiner');
+    return `Pour que le dossier <strong>${prenom} ${nom}</strong> soit présentable en séance, il manque :<ul>${manques.map(m => '<li>' + m + '</li>').join('')}</ul>Ces éléments n'empêchent pas le rendez-vous, mais leur absence fragilise l'analyse et la traçabilité.`;
+  }
+
+  if (ql.includes('risque') || ql.includes('opportunité')) {
+    const risks = [];
+    const ops = [];
+    if (parseFloat(tauxEndettement) > 35) risks.push('Endettement à <strong>' + tauxEndettement + '%</strong> — vigilance si hausse des taux ou baisse des revenus');
+    if ((actifs.rp + actifs.loc) / totalActif > 0.6) risks.push('Concentration immobilière forte (<strong>' + Math.round((actifs.rp + actifs.loc) / totalActif * 100) + '%</strong> du patrimoine) — liquidité et diversification à travailler');
+    risks.push('Absence de clause bénéficiaire optimisée sur l\'assurance-vie (' + sit + ')');
+    if (actifs.per < 150 && age < 60) ops.push('Plafond PER sous-utilisé — déduction fiscale disponible sur la TMI');
+    if (actifNet > 800) ops.push('Patrimoine net significatif (<strong>' + fmtK(actifNet) + '</strong>) — structuration juridique (SCI IS, démembrement) à envisager');
+    ops.push('Capacité d\'investissement complémentaire via l\'effet de levier — taux d\'endettement compatible');
+    return `<strong>3 risques identifiés :</strong><ul>${risks.slice(0,3).map(r => '<li>' + r + '</li>').join('')}</ul><strong>3 opportunités :</strong><ul>${ops.slice(0,3).map(o => '<li>' + o + '</li>').join('')}</ul>Ces éléments sont à valider par le conseiller en séance — ils constituent des pistes de travail, non des recommandations.`;
+  }
+
+  if (ql.includes('synthèse') || ql.includes('rdv') || ql.includes('rendez-vous') || ql.includes('6 ligne')) {
+    return `Synthèse préparation RDV — <strong>${prenom} ${nom}</strong><ul>
+      <li>${age} ans · ${sit} · ${prof} — patrimoine net <strong>${fmtK(actifNet)}</strong></li>
+      <li>Structure immobilière dominante (${Math.round((actifs.rp + actifs.loc) / totalActif * 100)}%) — profil de capitalisation établi</li>
+      <li>Endettement ${parseFloat(tauxEndettement) < 35 ? 'maîtrisé à ' + tauxEndettement + '%' : 'élevé à ' + tauxEndettement + '% — point de vigilance'}</li>
+      <li>Objectif déclaré : ${obj.toLowerCase()} — à mettre en adéquation avec la structure actuelle</li>
+      <li>${actifs.per < 150 && age < 60 ? 'PER sous-alimenté — opportunité fiscale immédiate' : 'PER correctement alimenté — maintenir les versements'}</li>
+      <li>Points à valider : clause bénéficiaire AV · justificatifs manquants · valorisation locatif</li>
+    </ul>`;
+  }
+
+  if (ql.includes('question') || ql.includes('poser') || ql.includes('séance') || ql.includes('verrouiller')) {
+    const qs = [];
+    if (obj.includes('retraite')) qs.push('Quel est votre horizon de départ envisagé, et avez-vous estimé vos revenus de remplacement ?');
+    qs.push('Votre situation familiale a-t-elle évolué depuis notre dernier entretien ? (mariage, naissance, héritage)');
+    qs.push('Avez-vous anticipé les droits de succession dans votre organisation patrimoniale actuelle ?');
+    if (parseFloat(tauxEndettement) > 30) qs.push('Le calendrier de remboursement de vos crédits est-il compatible avec votre projet ?');
+    qs.push('Avez-vous des projets d\'investissement ou de cession immobilière à horizon 3 ans ?');
+    qs.push('Votre taux marginal d\'imposition — avez-vous optimisé vos versements déductibles cette année ?');
+    return `Questions recommandées pour la séance avec <strong>${prenom} ${nom}</strong> :<ul>${qs.map(q => '<li>' + q + '</li>').join('')}</ul>Ces questions visent à compléter le dossier et à ancrer l'entretien sur les priorités du client.`;
+  }
+
+  if (ql.includes('préconisation') || ql.includes('produit') || ql.includes('couverture')) {
+    return `Pistes à explorer pour <strong>${prenom} ${nom}</strong> (hypothèses à valider en séance) :<ul>
+      ${actifs.per < 150 && age < 60 ? '<li><strong>PER</strong> — effort de versement avant le 31/12, déduction sur TMI</li>' : ''}
+      ${actifNet > 1300 ? '<li><strong>Démembrement / SCI IS</strong> — optimisation IFI et transmission</li>' : ''}
+      <li><strong>Réorientation de l\'assurance-vie</strong> — rééquilibrage fonds euro / UC selon horizon</li>
+      <li><strong>Assurance prévoyance</strong> — vérifier la couverture décès/invalidité au regard des charges</li>
+      ${(actifs.rp + actifs.loc) / totalActif > 0.6 ? '<li><strong>Diversification</strong> — SCPI ou ETF pour rééquilibrer la part financière</li>' : ''}
+    </ul><em style="font-size:11px;color:var(--text3)">Ces pistes ne constituent pas des recommandations. Leur pertinence doit être validée par le conseiller habilité.</em>`;
+  }
+
+  if (ql.includes('conformité') || ql.includes('mif') || ql.includes('dda')) {
+    return `Points de conformité MIF2 à matérialiser pour <strong>${prenom} ${nom}</strong> :<ul>
+      <li>Document d\'adéquation — à produire après la séance, avant tout acte</li>
+      <li>Profil de risque — à reconfirmer si le délai dépasse 12 mois</li>
+      <li>Analyse des besoins et exigences DDA — obligatoire pour tout acte sur contrat d\'assurance</li>
+      <li>Entretien annuel — à tracer dans le journal d\'audit</li>
+    </ul>Consultez l\'onglet <strong>Conformité dossiers</strong> pour le détail de la checklist et les dates d\'expiration.`;
+  }
+
+  // Réponses réglementaires générales issues de la base de connaissance
+  if (ql.includes('per') || ql.includes('retraite') || ql.includes('plafond')) {
+    return `<strong>PER — Plafonds de déduction (2025)</strong><ul>
+      <li>Salarié : ${KB.fiscalite.per.plafondSalarie}</li>
+      <li>TNS / Chef d'entreprise : ${KB.fiscalite.per.plafondTNS}</li>
+      <li>Plancher : ${KB.fiscalite.per.plancher}</li>
+      <li>Déblocage anticipé : ${KB.fiscalite.per.deblocage}</li>
+    </ul>
+    Pour <strong>${prenom} ${nom}</strong> (${prof}) : ${actifs.per < 150 && age < 60 ? `PER actuel à ${fmtK(actifs.per)} — capacity de versement disponible avant plafond` : `PER à ${fmtK(actifs.per)} — vérifier si le plafond est atteint`}.`;
+  }
+
+  if (ql.includes('assurance-vie') || (ql.includes('av') && ql.includes('fiscal')) || ql.includes('clause bénéficiaire') || ql.includes('rachat')) {
+    return `<strong>Assurance-vie — Fiscalité</strong><ul>
+      <li>Avant 8 ans : ${KB.fiscalite.av.avant8ans}</li>
+      <li>Après 8 ans : ${KB.fiscalite.av.apres8ans}</li>
+      <li>Décès (hors conjoint) : ${KB.fiscalite.av.deces}</li>
+      <li>Conjoint / PACS : ${KB.fiscalite.av.conjoint}</li>
+    </ul>
+    Pour <strong>${prenom} ${nom}</strong> : AV à ${fmtK(actifs.av)}. ${sit === 'Marié(e)' || sit === 'Pacsé(e)' ? 'Conjoint exonéré — vérifier la rédaction de la clause bénéficiaire.' : 'Clause bénéficiaire à optimiser selon situation familiale.'}`;
+  }
+
+  if (ql.includes('ifi') || ql.includes('fortune immobilière') || ql.includes('impôt sur la fortune')) {
+    const immoBrut = actifs.rp + actifs.loc + actifs.scpi;
+    return `<strong>IFI — Impôt sur la Fortune Immobilière</strong><ul>
+      <li>Seuil d'imposition : ${(KB.fiscalite.ifi.seuil / 1000).toLocaleString('fr-FR')} K€ de patrimoine immobilier net</li>
+      <li>Barème : ${KB.fiscalite.ifi.bareme}</li>
+      <li>Exonérations : ${KB.fiscalite.ifi.exonerations}</li>
+      <li>Optimisations : ${KB.fiscalite.ifi.optimisations}</li>
+    </ul>
+    Pour <strong>${prenom} ${nom}</strong> : immobilier brut estimé à ${fmtK(immoBrut)}. ${immoBrut > 1300 ? '<strong style="color:var(--red)">Seuil IFI potentiellement franchi</strong> — analyse approfondie du passif déductible requise.' : 'Seuil IFI non atteint à date.'}`;
+  }
+
+  if (ql.includes('succession') || ql.includes('donation') || ql.includes('transmission') || ql.includes('héritage') || ql.includes('dutreil')) {
+    return `<strong>Droits de succession & donation</strong><ul>
+      <li>Abattements : ${KB.fiscalite.succession.abattements}</li>
+      <li>Pacte Dutreil : ${KB.fiscalite.succession.dutreil}</li>
+      <li>Don manuel exonéré : ${KB.fiscalite.succession.donManuel}</li>
+    </ul>
+    Pour <strong>${prenom} ${nom}</strong> (${age} ans, ${sit}) : patrimoine net de ${fmtK(actifNet)} — la stratégie de transmission mérite d'être anticipée. ${age > 60 ? 'À cet âge, la fenêtre de donation avec abattement plein reste ouverte.' : 'Horizon de transmission à long terme — travail sur la structuration des actifs.'}`;
+  }
+
+  if (ql.includes('mif') || ql.includes('adéquation') || ql.includes('questionnaire') || ql.includes('rapport d\'adéquation')) {
+    return `<strong>MIF2 — Obligations d'adéquation</strong><ul>
+      <li>Mise à jour questionnaire : ${KB.mif2.suitability.delaiMaj}</li>
+      <li>Conservation : ${KB.mif2.suitability.conservation}</li>
+      <li>ESG : ${KB.mif2.suitability.esg}</li>
+      <li>Frais ex-ante : ${KB.mif2.frais.exante}</li>
+      <li>Relevé ex-post : ${KB.mif2.frais.expost}</li>
+      <li>Évolution RIS : ${KB.mif2.ris2025}</li>
+    </ul>`;
+  }
+
+  if (ql.includes('lcb') || ql.includes('blanchiment') || ql.includes('kyc') || ql.includes('tracfin') || ql.includes('ppe')) {
+    return `<strong>LCB-FT — Obligations anti-blanchiment</strong><ul>
+      <li>Vigilance standard : ${KB.lcbft.vigilanceStandard}</li>
+      <li>Vigilance renforcée : ${KB.lcbft.vigilanceRenforcee}</li>
+      <li>TRACFIN : ${KB.lcbft.tracfin}</li>
+      <li>Conservation pièces : ${KB.lcbft.conservation}</li>
+    </ul>`;
+  }
+
+  if (ql.includes('dda') || ql.includes('assurance') && (ql.includes('formation') || ql.includes('distribution') || ql.includes('abe') || ql.includes('ipid'))) {
+    return `<strong>DDA — Distribution d'Assurances</strong><ul>
+      <li>ABE : ${KB.dda.abe}</li>
+      <li>Formation continue : ${KB.dda.formation}</li>
+      <li>IPID : ${KB.dda.ipid}</li>
+      <li>Conflits d'intérêts : ${KB.dda.conflits}</li>
+    </ul>`;
+  }
+
+  if (ql.includes('dora') || ql.includes('numérique') || ql.includes('ris ') || ql.includes('eltif') || ql.includes('lmnp') || ql.includes('évolution') || ql.includes('nouveauté') || ql.includes('2025')) {
+    return `<strong>Évolutions réglementaires 2024-2026</strong><ul>
+      <li><strong>DORA :</strong> ${KB.evolutions2025.dora}</li>
+      <li><strong>Retail Investment Strategy :</strong> ${KB.evolutions2025.ris}</li>
+      <li><strong>ESG :</strong> ${KB.evolutions2025.esg}</li>
+      <li><strong>LMNP LF2025 :</strong> ${KB.evolutions2025.lmnp}</li>
+      <li><strong>ELTIF 2 :</strong> ${KB.produits.eltif2}</li>
+      <li><strong>Pinel :</strong> ${KB.produits.pinel}</li>
+    </ul>`;
+  }
+
+  if (ql.includes('scpi') || ql.includes('pierre-papier') || ql.includes('rendement')) {
+    return `<strong>SCPI</strong><ul>
+      <li>${KB.produits.scpi}</li>
+    </ul>
+    Pour <strong>${prenom} ${nom}</strong> : SCPI/OPCI à ${fmtK(actifs.scpi)} soit ${pct(actifs.scpi, totalActif)} du patrimoine.
+    ${actifs.scpi < totalActif * 0.1 ? 'Sous-pondération pierre-papier — potentiel de diversification.' : 'Position SCPI significative — vérifier la diversification géographique et sectorielle.'}`;
+  }
+
+  if (ql.includes('statut') || ql.includes('cif') || ql.includes('ias') || ql.includes('iobsp') || ql.includes('orias')) {
+    return `<strong>Statuts réglementaires CGP</strong><ul>
+      <li><strong>CIF :</strong> Régulateur ${KB.statuts.cif.regulateur} | RC min : ${KB.statuts.cif.rc}</li>
+      <li><strong>IAS Courtier :</strong> Régulateur ${KB.statuts.ias.regulateur} | Inscription : ${KB.statuts.ias.inscription} | RC min : ${KB.statuts.ias.rc}</li>
+      <li><strong>IOBSP :</strong> Régulateur ${KB.statuts.iobsp.regulateur} | Inscription : ${KB.statuts.iobsp.inscription} | Activités : ${KB.statuts.iobsp.activites}</li>
+    </ul>`;
+  }
+
+  return `Je n'ai pas de réponse spécifique pour cette question sur le dossier <strong>${prenom} ${nom}</strong>.<br><br>
+  Thèmes couverts par la base de connaissance : MIF2, adéquation, rétrocessions, DDA, LCB-FT, statuts CGP, PER, assurance-vie, IFI, succession, SCPI, LMNP, évolutions 2024-2026.<br><br>
+  Essayez un des prompts rapides à gauche ou reformulez votre question.`;
+}
+
+// ===== CONFORMITÉ =====
+
+const TODAY = new Date('2026-04-03');
+function daysUntil(dateStr) {
+  return Math.round((new Date(dateStr) - TODAY) / 86400000);
+}
+function fmtDate(dateStr) {
+  return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+// Données mock dossiers
+const DOSSIERS = [
+  {
+    id: 'D001', prenom: 'Philippe', nom: 'Marchand', age: 52, conseiller: 'S. Dupont',
+    lastUpdate: '2026-03-28', score: 87, nbAlertes: 1,
+    checklist: {
+      'MIF2 — Connaissance client': [
+        { lbl: 'Questionnaire connaissance & expérience', statut: 'ok', date: '2025-11-15', expiry: '2026-11-15' },
+        { lbl: 'Profil de risque validé', statut: 'ok', date: '2025-11-15', expiry: '2026-11-15' },
+        { lbl: 'Document d\'adéquation signé', statut: 'ok', date: '2026-01-10', expiry: null },
+        { lbl: 'Entretien annuel réalisé', statut: 'ok', date: '2026-01-10', expiry: null },
+      ],
+      'MIF2 — Entrée en relation': [
+        { lbl: 'Lettre de mission signée', statut: 'ok', date: '2024-03-01', expiry: null },
+        { lbl: 'Justificatif d\'identité (CNI/Passeport)', statut: 'warn', date: '2023-04-15', expiry: '2026-04-15' },
+        { lbl: 'Justificatif de domicile < 3 mois', statut: 'ok', date: '2026-03-01', expiry: '2026-06-01' },
+        { lbl: 'Avis d\'imposition N-1', statut: 'ok', date: '2025-09-20', expiry: '2026-09-20' },
+      ],
+      'DDA Assurance': [
+        { lbl: 'Analyse des besoins et exigences', statut: 'ok', date: '2026-01-10', expiry: null },
+        { lbl: 'Fiche conseil assurance-vie', statut: 'ok', date: '2026-01-10', expiry: null },
+        { lbl: 'IPID / DIP remis et signé', statut: 'ok', date: '2026-01-10', expiry: null },
+      ],
+    },
+  },
+  {
+    id: 'D002', prenom: 'Marie-Claire', nom: 'Fontaine', age: 67, conseiller: 'A. Bernard',
+    lastUpdate: '2026-02-14', score: 42, nbAlertes: 4,
+    checklist: {
+      'MIF2 — Connaissance client': [
+        { lbl: 'Questionnaire connaissance & expérience', statut: 'ko', date: null, expiry: null },
+        { lbl: 'Profil de risque validé', statut: 'ko', date: null, expiry: null },
+        { lbl: 'Document d\'adéquation signé', statut: 'ko', date: null, expiry: null },
+        { lbl: 'Entretien annuel réalisé', statut: 'warn', date: '2024-09-05', expiry: '2025-09-05' },
+      ],
+      'MIF2 — Entrée en relation': [
+        { lbl: 'Lettre de mission signée', statut: 'ok', date: '2022-06-10', expiry: null },
+        { lbl: 'Justificatif d\'identité (CNI/Passeport)', statut: 'ok', date: '2025-01-20', expiry: '2035-01-20' },
+        { lbl: 'Justificatif de domicile < 3 mois', statut: 'ko', date: null, expiry: null },
+        { lbl: 'Avis d\'imposition N-1', statut: 'ok', date: '2025-08-12', expiry: '2026-08-12' },
+      ],
+      'DDA Assurance': [
+        { lbl: 'Analyse des besoins et exigences', statut: 'ko', date: null, expiry: null },
+        { lbl: 'Fiche conseil assurance-vie', statut: 'ok', date: '2022-06-10', expiry: null },
+        { lbl: 'IPID / DIP remis et signé', statut: 'ko', date: null, expiry: null },
+      ],
+    },
+  },
+  {
+    id: 'D003', prenom: 'Jean-François', nom: 'Leclerc', age: 44, conseiller: 'S. Dupont',
+    lastUpdate: '2026-03-31', score: 95, nbAlertes: 0,
+    checklist: {
+      'MIF2 — Connaissance client': [
+        { lbl: 'Questionnaire connaissance & expérience', statut: 'ok', date: '2026-02-20', expiry: '2027-02-20' },
+        { lbl: 'Profil de risque validé', statut: 'ok', date: '2026-02-20', expiry: '2027-02-20' },
+        { lbl: 'Document d\'adéquation signé', statut: 'ok', date: '2026-03-05', expiry: null },
+        { lbl: 'Entretien annuel réalisé', statut: 'ok', date: '2026-03-05', expiry: null },
+      ],
+      'MIF2 — Entrée en relation': [
+        { lbl: 'Lettre de mission signée', statut: 'ok', date: '2023-01-15', expiry: null },
+        { lbl: 'Justificatif d\'identité (CNI/Passeport)', statut: 'ok', date: '2024-07-10', expiry: '2034-07-10' },
+        { lbl: 'Justificatif de domicile < 3 mois', statut: 'ok', date: '2026-03-15', expiry: '2026-06-15' },
+        { lbl: 'Avis d\'imposition N-1', statut: 'ok', date: '2025-08-30', expiry: '2026-08-30' },
+      ],
+      'DDA Assurance': [
+        { lbl: 'Analyse des besoins et exigences', statut: 'ok', date: '2026-03-05', expiry: null },
+        { lbl: 'Fiche conseil assurance-vie', statut: 'ok', date: '2026-03-05', expiry: null },
+        { lbl: 'IPID / DIP remis et signé', statut: 'ok', date: '2026-03-05', expiry: null },
+      ],
+    },
+  },
+  {
+    id: 'D004', prenom: 'Sophie', nom: 'Renard', age: 39, conseiller: 'M. Laurent',
+    lastUpdate: '2026-03-10', score: 71, nbAlertes: 2,
+    checklist: {
+      'MIF2 — Connaissance client': [
+        { lbl: 'Questionnaire connaissance & expérience', statut: 'ok', date: '2025-10-01', expiry: '2026-10-01' },
+        { lbl: 'Profil de risque validé', statut: 'ok', date: '2025-10-01', expiry: '2026-10-01' },
+        { lbl: 'Document d\'adéquation signé', statut: 'ko', date: null, expiry: null },
+        { lbl: 'Entretien annuel réalisé', statut: 'ok', date: '2025-10-01', expiry: null },
+      ],
+      'MIF2 — Entrée en relation': [
+        { lbl: 'Lettre de mission signée', statut: 'ok', date: '2023-05-20', expiry: null },
+        { lbl: 'Justificatif d\'identité (CNI/Passeport)', statut: 'ok', date: '2024-03-12', expiry: '2034-03-12' },
+        { lbl: 'Justificatif de domicile < 3 mois', statut: 'warn', date: '2025-12-20', expiry: '2026-03-20' },
+        { lbl: 'Avis d\'imposition N-1', statut: 'ok', date: '2025-09-05', expiry: '2026-09-05' },
+      ],
+      'DDA Assurance': [
+        { lbl: 'Analyse des besoins et exigences', statut: 'ok', date: '2025-10-01', expiry: null },
+        { lbl: 'Fiche conseil assurance-vie', statut: 'ko', date: null, expiry: null },
+        { lbl: 'IPID / DIP remis et signé', statut: 'ok', date: '2025-10-01', expiry: null },
+      ],
+    },
+  },
+  {
+    id: 'D005', prenom: 'Bernard', nom: 'Castellan', age: 71, conseiller: 'A. Bernard',
+    lastUpdate: '2026-01-08', score: 58, nbAlertes: 3,
+    checklist: {
+      'MIF2 — Connaissance client': [
+        { lbl: 'Questionnaire connaissance & expérience', statut: 'warn', date: '2024-01-15', expiry: '2025-01-15' },
+        { lbl: 'Profil de risque validé', statut: 'warn', date: '2024-01-15', expiry: '2025-01-15' },
+        { lbl: 'Document d\'adéquation signé', statut: 'ok', date: '2024-01-15', expiry: null },
+        { lbl: 'Entretien annuel réalisé', statut: 'warn', date: '2024-01-15', expiry: '2025-01-15' },
+      ],
+      'MIF2 — Entrée en relation': [
+        { lbl: 'Lettre de mission signée', statut: 'ok', date: '2020-11-03', expiry: null },
+        { lbl: 'Justificatif d\'identité (CNI/Passeport)', statut: 'ok', date: '2023-06-01', expiry: '2033-06-01' },
+        { lbl: 'Justificatif de domicile < 3 mois', statut: 'ok', date: '2026-01-05', expiry: '2026-04-05' },
+        { lbl: 'Avis d\'imposition N-1', statut: 'ko', date: null, expiry: null },
+      ],
+      'DDA Assurance': [
+        { lbl: 'Analyse des besoins et exigences', statut: 'ok', date: '2024-01-15', expiry: null },
+        { lbl: 'Fiche conseil assurance-vie', statut: 'ok', date: '2024-01-15', expiry: null },
+        { lbl: 'IPID / DIP remis et signé', statut: 'ok', date: '2024-01-15', expiry: null },
+      ],
+    },
+  },
+  {
+    id: 'D006', prenom: 'Nathalie', nom: 'Voisin', age: 55, conseiller: 'M. Laurent',
+    lastUpdate: '2026-04-01', score: 100, nbAlertes: 0,
+    checklist: {
+      'MIF2 — Connaissance client': [
+        { lbl: 'Questionnaire connaissance & expérience', statut: 'ok', date: '2026-03-20', expiry: '2027-03-20' },
+        { lbl: 'Profil de risque validé', statut: 'ok', date: '2026-03-20', expiry: '2027-03-20' },
+        { lbl: 'Document d\'adéquation signé', statut: 'ok', date: '2026-04-01', expiry: null },
+        { lbl: 'Entretien annuel réalisé', statut: 'ok', date: '2026-04-01', expiry: null },
+      ],
+      'MIF2 — Entrée en relation': [
+        { lbl: 'Lettre de mission signée', statut: 'ok', date: '2024-09-10', expiry: null },
+        { lbl: 'Justificatif d\'identité (CNI/Passeport)', statut: 'ok', date: '2025-11-05', expiry: '2035-11-05' },
+        { lbl: 'Justificatif de domicile < 3 mois', statut: 'ok', date: '2026-03-25', expiry: '2026-06-25' },
+        { lbl: 'Avis d\'imposition N-1', statut: 'ok', date: '2025-09-10', expiry: '2026-09-10' },
+      ],
+      'DDA Assurance': [
+        { lbl: 'Analyse des besoins et exigences', statut: 'ok', date: '2026-04-01', expiry: null },
+        { lbl: 'Fiche conseil assurance-vie', statut: 'ok', date: '2026-04-01', expiry: null },
+        { lbl: 'IPID / DIP remis et signé', statut: 'ok', date: '2026-04-01', expiry: null },
+      ],
+    },
+  },
+];
+
+const AUDIT_LOG = [
+  { time: '2026-04-03 09:14', color: '#2d6a4f', txt: 'Document d\'adéquation validé — <strong>Nathalie Voisin</strong>', actor: 'M. Laurent' },
+  { time: '2026-04-01 16:45', color: '#2d6a4f', txt: 'Dossier marqué conforme après mise à jour IPID — <strong>Nathalie Voisin</strong>', actor: 'Système IA' },
+  { time: '2026-03-31 11:22', color: '#2d6a4f', txt: 'Entretien annuel réalisé et tracé — <strong>Jean-François Leclerc</strong>', actor: 'S. Dupont' },
+  { time: '2026-03-28 14:08', color: '#9a7c38', txt: 'Alerte expiration CNI envoyée au client — <strong>Philippe Marchand</strong>', actor: 'Système Make' },
+  { time: '2026-03-10 10:30', color: '#c07020', txt: 'Document d\'adéquation manquant détecté — <strong>Sophie Renard</strong>', actor: 'Système IA' },
+  { time: '2026-02-14 09:00', color: '#9b2335', txt: 'Dossier bloquant : 4 items non conformes — <strong>Marie-Claire Fontaine</strong>', actor: 'Système IA' },
+  { time: '2026-01-08 15:50', color: '#c07020', txt: 'Questionnaire MIF2 expiré — relance envoyée — <strong>Bernard Castellan</strong>', actor: 'Système Make' },
+];
+
+function scoreColor(s) {
+  return s >= 85 ? '#2d6a4f' : s >= 65 ? '#c07020' : '#9b2335';
+}
+function scoreClass(s) {
+  return s >= 85 ? 'sp-green' : s >= 65 ? 'sp-amber' : 'sp-red';
+}
+function statutBadge(s) {
+  if (s >= 85) return '<span class="statut-badge sb-ok">Conforme</span>';
+  if (s >= 65) return '<span class="statut-badge sb-warn">À compléter</span>';
+  return '<span class="statut-badge sb-ko">Bloquant</span>';
+}
+
+let confRendered = false;
+let selectedDossier = null;
+
+function renderConformite() {
+  if (confRendered) return;
+  confRendered = true;
+
+  // KPIs
+  const total = DOSSIERS.length;
+  const conformes = DOSSIERS.filter(d => d.score >= 85).length;
+  const aCompleter = DOSSIERS.filter(d => d.score >= 65 && d.score < 85).length;
+  const bloquants = DOSSIERS.filter(d => d.score < 65).length;
+  const totalAlertes = DOSSIERS.reduce((a, d) => a + d.nbAlertes, 0);
+
+  document.getElementById('conf-kpis').innerHTML = `
+    <div class="ckpi"><div class="ckpi-val navy">${total}</div><div class="ckpi-lbl">Dossiers actifs</div></div>
+    <div class="ckpi"><div class="ckpi-val green">${conformes}</div><div class="ckpi-lbl">Conformes MIF2</div></div>
+    <div class="ckpi"><div class="ckpi-val amber">${aCompleter}</div><div class="ckpi-lbl">À compléter</div></div>
+    <div class="ckpi"><div class="ckpi-val red">${bloquants}</div><div class="ckpi-lbl">Bloquants</div></div>
+  `;
+
+  renderDossiersTable(DOSSIERS);
+  renderExpirations();
+  renderAudit();
+}
+
+function renderDossiersTable(list) {
+  document.getElementById('conf-tbody').innerHTML = list.map(d => `
+    <tr class="dr-row${selectedDossier === d.id ? ' selected' : ''}" onclick="showDetail('${d.id}')">
+      <td>
+        <div style="font-weight:600;color:var(--text)">${d.prenom} ${d.nom}</div>
+        <div style="font-size:11px;color:var(--text3)">${d.age} ans · ${d.id}</div>
+      </td>
+      <td>${d.conseiller}</td>
+      <td>
+        <div class="score-bar-wrap">
+          <span class="score-pill ${scoreClass(d.score)}">${d.score}%</span>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" style="width:${d.score}%;background:${scoreColor(d.score)}"></div>
+          </div>
+        </div>
+      </td>
+      <td>${statutBadge(d.score)}</td>
+      <td style="font-family:var(--mono);font-size:11px;">${fmtDate(d.lastUpdate)}</td>
+      <td>
+        ${d.nbAlertes > 0
+          ? `<span class="score-pill sp-red">${d.nbAlertes} alerte${d.nbAlertes > 1 ? 's' : ''}</span>`
+          : `<span style="font-size:11px;color:var(--text3)">—</span>`}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterDossiers(q) {
+  const filtered = DOSSIERS.filter(d =>
+    (d.prenom + ' ' + d.nom + ' ' + d.conseiller).toLowerCase().includes(q.toLowerCase())
+  );
+  renderDossiersTable(filtered);
+}
+
+function renderExpirations() {
+  // Collecter tous les docs avec expiry dans les 60 prochains jours
+  const items = [];
+  DOSSIERS.forEach(d => {
+    Object.values(d.checklist).flat().forEach(item => {
+      if (item.expiry) {
+        const j = daysUntil(item.expiry);
+        if (j <= 60) items.push({ client: d.prenom + ' ' + d.nom, doc: item.lbl, days: j, score: d.score });
+      }
+    });
+  });
+  items.sort((a, b) => a.days - b.days);
+
+  if (items.length === 0) {
+    document.getElementById('exp-section').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('exp-section').innerHTML = `
+    <div class="exp-head">
+      <span style="font-size:16px;">⚠</span>
+      <span class="exp-title">Expirations imminentes</span>
+      <span class="exp-count">${items.length} document${items.length > 1 ? 's' : ''}</span>
+    </div>
+    ${items.map(i => `
+      <div class="exp-row">
+        <div class="exp-dot" style="background:${i.days <= 14 ? '#9b2335' : '#c07020'}"></div>
+        <div class="exp-client">${i.client}</div>
+        <div class="exp-doc">${i.doc}</div>
+        <div class="exp-days ${i.days <= 14 ? 'urgent' : 'warning'}">${i.days <= 0 ? 'Expiré' : 'J-' + i.days}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderAudit() {
+  document.getElementById('audit-card').innerHTML = `
+    <div class="audit-head">
+      <span class="audit-title">Journal d'audit</span>
+      <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">${AUDIT_LOG.length} entrées</span>
+    </div>
+    ${AUDIT_LOG.map(e => `
+      <div class="audit-row">
+        <div class="audit-time">${e.time}</div>
+        <div class="audit-dot" style="background:${e.color}"></div>
+        <div>
+          <div class="audit-txt">${e.txt}</div>
+          <div class="audit-actor">${e.actor}</div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function showDetail(id) {
+  selectedDossier = id;
+  const d = DOSSIERS.find(x => x.id === id);
+  if (!d) return;
+
+  // Highlight row
+  document.querySelectorAll('.dr-row').forEach(r => r.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+
+  const c = scoreColor(d.score);
+  let checklistHtml = '';
+  Object.entries(d.checklist).forEach(([section, items]) => {
+    const ok = items.filter(i => i.statut === 'ok').length;
+    checklistHtml += `
+      <div class="checklist-section">
+        <div class="cls-head">
+          <span>${section}</span>
+          <span class="cls-prog">${ok}/${items.length}</span>
+        </div>
+        ${items.map(item => {
+          const j = item.expiry ? daysUntil(item.expiry) : null;
+          const isSoon = j !== null && j <= 30 && j > 0;
+          const isExp  = j !== null && j <= 0;
+          const iconMap = { ok: '✓', warn: '!', ko: '✗', na: '—' };
+          const ciMap   = { ok: 'ci-ok', warn: 'ci-warn', ko: 'ci-ko', na: 'ci-na' };
+          const lblClass = item.statut === 'ko' ? 'manquant' : (item.statut === 'warn' || isSoon || isExp) ? 'expire' : '';
+          let dateLabel = '';
+          if (item.statut === 'ko') dateLabel = '<span class="cl-date expired">Manquant</span>';
+          else if (isExp) dateLabel = `<span class="cl-date expired">Expiré le ${fmtDate(item.expiry)}</span>`;
+          else if (isSoon) dateLabel = `<span class="cl-date soon">Expire J-${j}</span>`;
+          else if (item.expiry) dateLabel = `<span class="cl-date">Exp. ${fmtDate(item.expiry)}</span>`;
+          else if (item.date) dateLabel = `<span class="cl-date">${fmtDate(item.date)}</span>`;
+          return `
+            <div class="cl-item">
+              <div class="cl-icon ${ciMap[item.statut]}">${iconMap[item.statut]}</div>
+              <div class="cl-lbl ${lblClass}">${item.lbl}</div>
+              ${dateLabel}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  });
+
+  document.getElementById('detail-card').innerHTML = `
+    <div class="det-head">
+      <div class="det-name">${d.prenom} ${d.nom}</div>
+      <div class="det-meta">${d.age} ans · ${d.id} · Conseiller : ${d.conseiller}</div>
+      <div class="det-score-row">
+        <div>
+          <div class="det-score-big" style="color:${c}">${d.score}%</div>
+          <div class="det-score-lbl">Score MIF2</div>
+        </div>
+        <div style="flex:1;">
+          <div class="det-score-track">
+            <div class="det-score-fill" style="width:${d.score}%;background:${c}"></div>
+          </div>
+          <div style="margin-top:6px;">${statutBadge(d.score)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="det-body">${checklistHtml}</div>
+    <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;">
+      <button style="font-family:var(--sans);font-size:12px;padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border-md);background:none;color:var(--text2);cursor:pointer;">Relancer client</button>
+      <button style="font-family:var(--sans);font-size:12px;padding:7px 14px;border-radius:var(--rs);border:none;background:var(--navy);color:#fff;cursor:pointer;font-weight:600;">Mettre à jour →</button>
+    </div>
+  `;
+
+  // Animate score bar
+  setTimeout(() => {
+    const fill = document.querySelector('.det-score-fill');
+    if (fill) fill.style.width = d.score + '%';
+  }, 50);
+}
+
+// ===== SCENARIO =====
+const steps = [
+  {
+    tag: '📥 Sources de données', tagC: 'var(--navy)',
+    title: 'Collecte des données client',
+    desc: 'L\'agent agrège toutes les sources disponibles : CRM (données personnelles, historique), documents uploadés par le client (PDFs, images) et données manuelles du conseiller.',
+    cfg: [
+      ['CRM connecté', 'HubSpot · Salesforce · Wealthcraft · Harvest'],
+      ['Documents acceptés', 'PDF · JPG · PNG · XLSX (relevés, contrats, avis d\'imposition)'],
+      ['Déclencheur Make', 'Webhook sur création dossier OU upload document OU RDV planifié'],
+      ['Authentification', 'OAuth2 CRM · Stockage chiffré AES-256 · RGPD conforme'],
+      ['Données minimales', 'Identité · Situation familiale · Liste des actifs et passifs'],
+    ],
+    tip: 'Pour les cabinets qui utilisent déjà Harvest ou Wealthcraft, ces logiciels exposent des APIs REST permettant d\'extraire directement les données patrimoniaux structurées — pas besoin d\'OCR sur les documents existants.',
+  },
+  {
+    tag: '📄 OCR & Extraction', tagC: 'var(--violet)',
+    title: 'OCR et extraction structurée',
+    desc: 'Claude API traite les documents en vision : relevés bancaires, relevés assurance-vie, avis d\'imposition, actes notariés. Il extrait les données chiffrées et les structure en JSON.',
+    cfg: [
+      ['Modèle', 'claude-sonnet-4-6 · vision activée · temperature=0'],
+      ['Upload Make', 'Module HTTP POST → api.anthropic.com/v1/messages · base64'],
+      ['Prompt extraction', 'JSON strict : actifs, passifs, revenus, charges, dates, taux'],
+      ['Tolérance erreur', 'Champs null si non lisible · Confidence score par champ'],
+      ['Fallback', 'Si document illisible → alerte conseiller + saisie manuelle'],
+    ],
+    tip: 'Versionnez le prompt d\'extraction dans une variable Make ou une SharePoint List. Quand les formats de documents changent (mise à jour des relevés assureurs par exemple), vous n\'avez à modifier qu\'une ligne.',
+  },
+  {
+    tag: '🧮 Calculs & Consolidation', tagC: 'var(--green)',
+    title: 'Consolidation et calculs patrimoniaux',
+    desc: 'Make effectue les calculs métier : actif brut par classe, total passif, actif net, ratios de liquidité et d\'endettement, part immobilière, exposition IFI.',
+    cfg: [
+      ['Actif brut', 'Σ(immobilier + financier + épargne retraite + liquidités)'],
+      ['Actif net', 'Actif brut − Total passif'],
+      ['Taux endettement', 'Passif / Actif brut × 100'],
+      ['Ratio liquidité', 'Liquidités / Actif brut × 100'],
+      ['IFI estimation', 'Σ(immobilier net de passif) si > 1 300 K€ → alerte'],
+      ['Plafond PER', 'Calcul selon revenus N-1 et versements existants'],
+    ],
+    tip: 'Ces calculs se font dans Make avec des modules "Set variables" et "Math". Pour les formules complexes (PER, IFI), utilisez un module "Tools → Perform a function" ou appelez une Azure Function dédiée si la complexité l\'exige.',
+  },
+  {
+    tag: '✦ Analyse IA', tagC: 'var(--gold)',
+    title: 'Rédaction de l\'analyse narrative',
+    desc: 'Second appel à Claude API pour générer le commentaire de synthèse, identifier les alertes et opportunités, et préparer la fiche d\'entretien du conseiller.',
+    cfg: [
+      ['Prompt analyse', 'Données consolidées JSON + profil + objectif + réglementation applicable'],
+      ['Sorties', 'Synthèse narrative · Liste alertes · Opportunités fiscales · Points entretien'],
+      ['Contraintes prompt', '"Ne jamais recommander un produit précis · signaler uniquement les pistes"'],
+      ['Format', 'JSON structuré → Parse JSON Make → champs séparés'],
+      ['Coût estimé', '~0.03€ par bilan complet (extraction + analyse)'],
+    ],
+    tip: 'Le prompt d\'analyse doit explicitement interdire toute recommandation de produit financier spécifique (MIF2). L\'agent identifie des "pistes à explorer" — le conseiller habilité formule ensuite le conseil et engage sa responsabilité.',
+  },
+  {
+    tag: '📑 Livrables & Envoi', tagC: 'var(--navy)',
+    title: 'Génération des livrables et workflow de validation',
+    desc: 'Make assemble les livrables, les soumet à validation du conseiller et, après signature, les envoie au client avec archivage et traçabilité complète.',
+    cfg: [
+      ['Bilan PDF', 'HTML → PDF via Puppeteer (Make) ou service WeasyPrint'],
+      ['Fiche entretien', 'Document Word généré via python-docx ou template Google Docs'],
+      ['Doc MIF2', 'Pré-rempli · Soumis au conseiller pour relecture et validation'],
+      ['Validation', 'Email conseiller avec lien "Valider" ou interface Make · Délai : 48h max'],
+      ['Envoi client', 'Email sécurisé · Portail client (optionnel) · Accusé de lecture'],
+      ['Archivage', 'SharePoint / OneDrive · Nommage standardisé · Log complet'],
+    ],
+    tip: 'La validation conseiller avant envoi est NON NÉGOCIABLE sur le plan réglementaire. Configurez une étape de validation dans Make avec un délai maximum de 48h — passé ce délai, une relance automatique est envoyée au responsable d\'équipe.',
+  },
+];
+
+let cstep = 0;
+
+function renderScenario() {
+  const nav = document.getElementById('snav');
+  if (nav.children.length > 0) return;
+  steps.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'sni' + (i === 0 ? ' active' : '');
+    d.onclick = () => gs(i);
+    d.innerHTML = `
+      <div>
+        <div class="snc">${i + 1}</div>
+        ${i < steps.length - 1 ? '<div class="snconn"></div>' : ''}
+      </div>
+      <div>
+        <div class="sntitle">${s.title}</div>
+        <div class="snsub">${s.tag}</div>
+      </div>
+    `;
+    nav.appendChild(d);
+  });
+  rs(0);
+}
+
+function gs(i) {
+  cstep = i;
+  document.querySelectorAll('.sni').forEach((el, idx) => {
+    el.classList.remove('active', 'done');
+    if (idx < i) el.classList.add('done');
+    else if (idx === i) el.classList.add('active');
+    el.querySelector('.snc').textContent = idx < i ? '✓' : idx + 1;
+  });
+  rs(i);
+}
+
+function rs(i) {
+  const s = steps[i];
+  document.getElementById('scc').innerHTML = `
+    <div class="sch">
+      <div class="sctag" style="color:${s.tagC}">${s.tag}</div>
+      <div class="sctitle">${s.title}</div>
+      <div class="scdesc">${s.desc}</div>
+    </div>
+    <div class="scbody">
+      <table class="cfg">
+        <thead><tr><th>Paramètre</th><th>Configuration</th></tr></thead>
+        <tbody>
+          ${s.cfg.map(c => `<tr><td>${c[0]}</td><td>${c[1]}</td></tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="tip">
+        <span style="color:var(--gold);flex-shrink:0;">💡</span>
+        <span>${s.tip}</span>
+      </div>
+      <div class="scfoot">
+        <span class="scprog">Étape ${i + 1} sur ${steps.length}</span>
+        <div style="display:flex;gap:8px;">
+          <button class="bprev" onclick="gs(${i - 1})" ${i === 0 ? 'disabled' : ''}>← Précédent</button>
+          <button class="bnext" onclick="gs(${i + 1})" ${i === steps.length - 1 ? 'disabled' : ''}>${i === steps.length - 1 ? '✓ Terminé' : 'Suivant →'}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
