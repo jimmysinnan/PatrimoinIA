@@ -132,13 +132,19 @@ Le distributeur doit :
 
 ### 2.3 Formation continue obligatoire
 
-**15 heures par an** de formation continue pour toute personne exerçant une activité de distribution d'assurances. Couvre :
-- Réglementation applicable
-- Produits distribués
-- Gestion des sinistres
-- Lutte contre le blanchiment
+**Texte :** Art. R. 512-9 du Code des assurances
 
-Organismes agréés : formations dispensées par les associations professionnelles (ANACOFI, CNCGP), les organismes de formation certifiés Qualiopi, les compagnies d'assurance partenaires.
+| Statut | Volume obligatoire | Précisions |
+|---|---|---|
+| **IAS** | 15h/an (ou 42,5h sur 3 ans) | Dont 7h minimum LCB-FT sur 3 ans |
+| **CIF** | 40h sur 2 ans | Validées par l'association agréée AMF |
+| **IOBSP** | 7h/an minimum | Selon les textes ACPR |
+
+**Contenu requis IAS :** droit des assurances, produits, réglementation DDA, LCB-FT, RGPD, éthique professionnelle, gestion des sinistres.
+
+**Traçabilité :** Attestations de formation à conserver (contrôle ACPR possible). Formations dispensées par des **organismes certifiés Qualiopi** ou équivalent.
+
+**Cumul statuts :** Un CGP cumulant IAS + CIF + IOBSP doit satisfaire aux exigences de **chacun** des statuts séparément.
 
 ### 2.4 Devoir de conseil renforcé (assurance-vie)
 
@@ -176,7 +182,7 @@ Pour les contrats d'assurance-vie, le distributeur doit :
 
 **À qui :** TRACFIN (Traitement du Renseignement et Action contre les Circuits Financiers clandestins)
 **Quand :** Dès que le CGP soupçonne que des fonds proviennent d'une infraction ou sont liés au financement du terrorisme
-**Comment :** Via le portail Télédéclaration TRACFIN (accès professionnel)
+**Comment :** Via le portail **ERMES** de TRACFIN (déclaration électronique obligatoire depuis 2021 — remplace l'ancien portail)
 
 **Délai :** Sans délai — pas de seuil de montant
 
@@ -245,9 +251,22 @@ Obligation de vérifier que le client ne figure pas sur les listes de gel des av
 
 ### 4.5 ORIAS — Registre des Intermédiaires
 
-**Vérification obligatoire :** Tout CGP exerçant doit être inscrit à l'ORIAS pour les statuts IAS, IOBSP, ALPSI. Le statut CIF est géré directement par les associations agréées AMF.
+**Tenu par :** CCI de Paris, sous tutelle du Ministère de l'Économie
+**Inscription obligatoire :** IAS, IOBSP, ALPSI — les CIF s'enregistrent via leur association agréée AMF
+**Renouvellement :** Annuel — **avant le 31 octobre** de chaque année (avec justificatifs : RCP, formation, garantie financière)
+**Frais 2024 :** ~30€ pour un enregistrement dans une catégorie, dégressif si cumul
+**URL vérification :** orias.fr — registre public consultable par les clients
 
-**URL vérification :** orias.fr — registre public consultable
+### 4.5b Associations professionnelles agréées AMF (CIF)
+
+| Association | Membres | Adhésion approx. |
+|---|---|---|
+| **CNCGP** | ~3 000 | 500-800€/an — réseau territorial fort |
+| **ANACOFI-CIF** | ~2 500 | Variable — formation intégrée |
+| **CNCIF** | ~1 800 | Structure légère |
+| **La Compagnie des CGP** | ~1 000 | Services back-office mutualisés |
+
+**Rôle :** Délivrent l'habilitation CIF (délégation AMF), contrôlent les membres, dispensent des formations validantes, représentent la profession. En cas d'exclusion : le CGP perd son statut CIF.
 
 ### 4.6 RC Professionnelle
 
@@ -495,6 +514,13 @@ Trois catégories de préférences à recueillir :
 3. **Prise en compte des PAI** (Principal Adverse Impacts) : facteurs d'impact négatif sur la durabilité
 
 Si le client exprime des préférences ESG : le CGP ne peut recommander que des produits qui y répondent, ou expliquer pourquoi les préférences ne peuvent être satisfaites.
+
+### 7.4b Loi Industrie Verte (octobre 2023)
+
+**En vigueur depuis 2024**
+- Obligation d'intégrer **au moins une UC en actifs non cotés** (private equity, infrastructure, forêts) dans les contrats d'assurance-vie en UC
+- Seuils progressifs selon l'encours du contrat
+- Impact CGP : la gamme UC conseillée doit inclure des fonds éligibles — vérifier avec les assureurs partenaires
 
 ### 7.5 Fin du Pinel — Bilan
 
