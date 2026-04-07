@@ -624,7 +624,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .rdv-qi { font-family: var(--serif); font-size: 13px; color: var(--gold); font-style: italic; flex-shrink: 0; }
 
 /* ===== COPILOT IA ===== */
-.copilot-layout { display: grid; grid-template-columns: 220px 1fr; gap: 22px; height: calc(100vh - 160px); min-height: 500px; }
+.copilot-layout { display: grid; grid-template-columns: 245px 1fr; gap: 22px; height: calc(100vh - 160px); min-height: 500px; }
 .copilot-sidebar {
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: var(--r); box-shadow: var(--shadow);
@@ -700,6 +700,47 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
   font-weight: 600; cursor: pointer; transition: background .12s;
 }
 .cop-send:hover { background: #0f1e33; }
+
+/* ===== COPILOT v2 — ENHANCEMENTS ===== */
+.cop-briefing-btn {
+  display: block; width: calc(100% - 24px); margin: 10px 12px 0;
+  padding: 10px 12px; background: var(--gold); border: none;
+  border-radius: var(--rs); font-family: var(--sans); font-size: 12px;
+  font-weight: 700; color: #fff; cursor: pointer; transition: all .12s;
+  letter-spacing: .03em; text-align: center;
+}
+.cop-briefing-btn:hover { background: #b8932e; }
+.cop-format-row { display: flex; gap: 6px; padding: 6px 12px 0; }
+.cop-fmt-btn {
+  flex: 1; padding: 5px 0; border: 1px solid var(--border-md);
+  background: var(--bg3); border-radius: var(--rs); font-size: 11px;
+  font-family: var(--sans); color: var(--text3); cursor: pointer; transition: all .12s;
+}
+.cop-fmt-btn.active { background: var(--navy-bg); border-color: var(--navy-bord); color: var(--navy); font-weight: 700; }
+.cop-cases { padding: 6px 12px 8px; border-top: 1px solid var(--border); }
+.cop-cases-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); margin-bottom: 4px; }
+.cop-case-btn {
+  display: block; width: 100%; text-align: left; padding: 6px 10px;
+  margin-bottom: 3px; background: transparent; border: 1px solid var(--border);
+  border-radius: var(--rs); font-size: 11px; color: var(--text3);
+  cursor: pointer; transition: all .12s; line-height: 1.3;
+}
+.cop-case-btn:hover { background: var(--bg3); border-color: var(--gold-bord); color: var(--text); }
+.cop-src { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 5px;
+  border-radius: 3px; margin-left: 3px; vertical-align: middle; letter-spacing: .02em; }
+.src-decl { background: #fff3e0; color: #e65100; }
+.src-calc { background: #e3f2fd; color: #1565c0; }
+.src-kb   { background: #e8f5e9; color: #2e7d32; }
+.src-hyp  { background: #f3e5f5; color: #6a1b9a; }
+.cop-section { margin: 12px 0 5px; font-size: 11px; font-weight: 700; color: var(--navy);
+  text-transform: uppercase; letter-spacing: .06em; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+.cop-alert-item { color: var(--red); }
+.tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px;
+  border-radius: 3px; margin-right: 4px; vertical-align: middle; }
+.tag-red   { background: rgba(200,50,50,.12); color: var(--red); border: 1px solid rgba(200,50,50,.2); }
+.tag-blue  { background: var(--navy-bg); color: var(--navy); border: 1px solid var(--navy-bord); }
+.tag-green { background: rgba(34,139,34,.1); color: #1a7a1a; border: 1px solid rgba(34,139,34,.2); }
+.tag-navy  { background: var(--navy-bg); color: var(--navy); border: 1px solid var(--navy-bord); }
 
 /* ===== MODULE CONFORMITÉ ===== */
 .conf-layout { display: grid; grid-template-columns: 1fr 380px; gap: 22px; align-items: start; }
@@ -1199,17 +1240,29 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
     <div class="copilot-sidebar">
       <div class="cop-shead">
         <div class="cop-stitle">Copilot PatrimonIA</div>
-        <div class="cop-ssub">Assistant métier CGP</div>
+        <div class="cop-ssub">Assistant métier CGP · v2</div>
+      </div>
+      <button class="cop-briefing-btn" onclick="briefingComplet()">✦ Briefing complet du dossier</button>
+      <div class="cop-format-row">
+        <button class="cop-fmt-btn active" id="fmt-court" onclick="toggleCopFormat('court')">Court</button>
+        <button class="cop-fmt-btn" id="fmt-complet" onclick="toggleCopFormat('complet')">Complet</button>
       </div>
       <div class="cop-prompts">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:4px;">Prompts rapides</div>
-        <button class="cop-prompt-btn" onclick="copSend('Que manque-t-il pour que ce dossier soit présentable demain ?')">Que manque-t-il pour ce dossier ?</button>
-        <button class="cop-prompt-btn" onclick="copSend('Résume-moi les 3 risques et les 3 opportunités visibles dans ce dossier.')">3 risques · 3 opportunités</button>
-        <button class="cop-prompt-btn" onclick="copSend('Prépare une synthèse de rendez-vous en 6 lignes.')">Synthèse RDV en 6 lignes</button>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:4px;">Sorties standard</div>
+        <button class="cop-prompt-btn" onclick="copSend('Résumé dossier avec sources')">📋 Résumé dossier</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quels éléments manquent pour compléter ce dossier ?')">📂 Points manquants</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quels sont les points d\'alerte sur ce dossier ?')">⚠ Points d\'alerte</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quelles opportunités patrimoniales à investiguer ?')">💡 Opportunités</button>
         <div class="cop-sep"></div>
-        <button class="cop-prompt-btn" onclick="copSend('Quelles questions dois-je poser pour verrouiller retraite, transmission et protection ?')">Questions à poser en séance</button>
-        <button class="cop-prompt-btn" onclick="copSend('Quelles pistes de préconisations pourraient être explorées, sous réserve de ma validation ?')">Pistes de préconisations</button>
-        <button class="cop-prompt-btn" onclick="copSend('Quels points de conformité MIF2 restent à matérialiser dans ce dossier ?')">Points conformité MIF2</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quelles questions préparer pour le rendez-vous ?')">❓ Questions RDV</button>
+        <button class="cop-prompt-btn" onclick="copSend('Checklist conformité MIF2 et DDA sur ce dossier ?')">✔ Checklist conformité</button>
+        <button class="cop-prompt-btn" onclick="copSend('Impact commercial et poches non adressées du dossier ?')">📈 Impact commercial</button>
+      </div>
+      <div class="cop-cases">
+        <div class="cop-cases-lbl">Cas d'exemple</div>
+        <button class="cop-case-btn" onclick="loadCase(0)">Couple 52 ans · Retraite CSP+</button>
+        <button class="cop-case-btn" onclick="loadCase(1)">Dirigeant · Trésorerie 420 K€</button>
+        <button class="cop-case-btn" onclick="loadCase(2)">Dossier incomplet · Transmission</button>
       </div>
       <div class="cop-context">
         <span class="cop-ctx-dot"></span>
@@ -1728,6 +1781,150 @@ function copSend(preset) {
   }, 1200 + Math.random() * 600);
 }
 
+// ===== COPILOT v2 — FORMAT & UTILITAIRES =====
+window._copFormat = 'court';
+
+function toggleCopFormat(f) {
+  window._copFormat = f;
+  document.getElementById('fmt-court').classList.toggle('active', f === 'court');
+  document.getElementById('fmt-complet').classList.toggle('active', f === 'complet');
+}
+
+// ===== TAXONOMY (patrimonia_taxonomy.yaml) =====
+const TAXONOMY = {
+  productFamilies: {
+    epargne_liquide: ['livrets','comptes_a_terme'],
+    assurance_vie: ['fonds_euros','unites_de_compte','capitalisation'],
+    retraite: ['per_individuel','per_entreprise'],
+    valeurs_mobilieres: ['compte_titres','pea','opcvm','etf'],
+    immobilier: ['residence_principale','locatif_nu','lmnp','scpi','opci','sci'],
+    prevoyance: ['deces','invalidite','incapacite','dependance'],
+    transmission: ['donation','demembrement','clause_beneficiaire'],
+    financement: ['credit_immobilier','credit_investissement']
+  },
+  standardOutputs: ['summary','missing_items','alerts','opportunities','questions_for_meeting','compliance_checklist','commercial_impact']
+};
+
+// ===== TRAINING CASES (patrimonia_training_cases.json) =====
+const TRAINING_CASES = [
+  {
+    id: 'case_001', title: 'Couple 52 ans · Retraite CSP+',
+    bilan: {
+      prenom: 'Exemple', nom: 'Cas 1', age: 52, sit: 'Marié(e)', prof: 'Salarié(e) cadre', obj: 'Préparer la retraite',
+      totalActif: 1680, totalPassif: 400, actifNet: 1280, tauxEndettement: '23.8', ratioLiquidite: '5.1',
+      actifs: { rp: 650, loc: 380, scpi: 0, pea: 110, av: 290, per: 95, ct: 70, liq: 85 },
+      alertes: ['Concentration immobilière', 'Données retraite incomplètes'], now: new Date().toLocaleDateString('fr-FR')
+    }
+  },
+  {
+    id: 'case_002', title: 'Dirigeant · Trésorerie 420 K€',
+    bilan: {
+      prenom: 'Exemple', nom: 'Cas 2', age: 46, sit: 'Marié(e)', prof: "Chef d'entreprise / TNS", obj: 'Optimiser ma fiscalité',
+      totalActif: 1020, totalPassif: 0, actifNet: 1020, tauxEndettement: '0', ratioLiquidite: '41.2',
+      actifs: { rp: 350, loc: 0, scpi: 0, pea: 0, av: 80, per: 20, ct: 150, liq: 420 },
+      alertes: ['Surliquidité non arbitrée', 'PEA absent', 'Données revenus manquantes'], now: new Date().toLocaleDateString('fr-FR')
+    }
+  },
+  {
+    id: 'case_003', title: 'Dossier incomplet · Transmission',
+    bilan: {
+      prenom: 'Exemple', nom: 'Cas 3', age: 68, sit: 'Veuf/Veuve', prof: 'Retraité(e)', obj: 'Transmettre mon patrimoine',
+      totalActif: 1950, totalPassif: 0, actifNet: 1950, tauxEndettement: '0', ratioLiquidite: '3.2',
+      actifs: { rp: 900, loc: 650, scpi: 120, pea: 0, av: 220, per: 0, ct: 0, liq: 60 },
+      alertes: ['Liquidité très faible', 'IFI potentiellement applicable', 'Succession non structurée'], now: new Date().toLocaleDateString('fr-FR')
+    }
+  }
+];
+
+function loadCase(idx) {
+  const c = TRAINING_CASES[idx];
+  window._lastBilan = c.bilan;
+  document.getElementById('cop-ctx-lbl').textContent = '[EXEMPLE] ' + c.title;
+  const chat = document.getElementById('cop-chat');
+  const empty = document.getElementById('cop-empty');
+  if (empty) empty.remove();
+  chat.innerHTML += `<div class="cop-msg ai"><div class="cop-avatar av-ai">✦</div><div class="cop-bubble">Cas d'exemple chargé : <strong>${c.title}</strong>.<br>Utilisez les sorties standard ou posez une question libre.</div></div>`;
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function briefingComplet() {
+  const b = window._lastBilan;
+  if (!b) { copSend('Résumé dossier avec sources'); return; }
+  const chat = document.getElementById('cop-chat');
+  const empty = document.getElementById('cop-empty');
+  if (empty) empty.remove();
+  chat.innerHTML += `<div class="cop-msg user"><div class="cop-avatar av-user">CGP</div><div class="cop-bubble">✦ Briefing complet du dossier</div></div>`;
+  const typingId = 'typing-' + Date.now();
+  chat.innerHTML += `<div class="cop-msg ai" id="${typingId}"><div class="cop-avatar av-ai">✦</div><div class="cop-bubble"><div class="cop-typing"><div class="cop-dot"></div><div class="cop-dot"></div><div class="cop-dot"></div></div></div></div>`;
+  chat.scrollTop = chat.scrollHeight;
+  setTimeout(() => {
+    const el = document.getElementById(typingId);
+    if (el) el.remove();
+    const { prenom, nom, age, prof, obj, totalActif, actifNet, tauxEndettement, ratioLiquidite, actifs, sit } = b;
+    const src = (t, lbl) => `<span class="cop-src src-${t}">${lbl}</span>`;
+    const S = { d: src('decl','Déclaratif'), c: src('calc','Calcul'), k: src('kb','Base KB'), h: src('hyp','Hypothèse') };
+    const sec = t => `<div class="cop-section">${t}</div>`;
+    const immoR = Math.round((actifs.rp + actifs.loc) / totalActif * 100);
+    const finaR = Math.round((actifs.pea + actifs.av + actifs.per + actifs.ct) / totalActif * 100);
+    const alerts = [];
+    if (parseFloat(tauxEndettement) > 35) alerts.push(`Endettement élevé <strong>${tauxEndettement}%</strong> ${S.c}`);
+    if ((actifs.rp + actifs.loc) / totalActif > 0.6) alerts.push(`Concentration immobilière forte <strong>${immoR}%</strong> ${S.c}`);
+    if (parseFloat(ratioLiquidite) < 5) alerts.push(`Liquidité insuffisante <strong>${ratioLiquidite}%</strong> ${S.c}`);
+    if (actifNet > 1300) alerts.push(`Seuil IFI potentiellement franchi (<strong>${fmtK(actifNet)}</strong>) ${S.c}`);
+    alerts.push(`Clause bénéficiaire AV — cohérence situation (${sit}) à vérifier ${S.h}`);
+    const ops = [];
+    if (actifs.per < 150 && age < 60) ops.push(`PER sous-alimenté (${fmtK(actifs.per)}) — déduction fiscale disponible ${S.c}`);
+    if (actifNet > 800) ops.push(`Structuration transmission à anticiper — patrimoine net ${fmtK(actifNet)} ${S.c}`);
+    if ((actifs.rp + actifs.loc) / totalActif > 0.6) ops.push(`Diversification financière (SCPI, ETF, AV UC) ${S.h}`);
+    if (actifs.pea < 50 && totalActif > 300) ops.push(`PEA absent ou marginal (${fmtK(actifs.pea)}) — enveloppe fiscale à alimenter ${S.c}`);
+    ops.push(`Prévoyance décès/invalidité — niveau de couverture à documenter ${S.h}`);
+    const brief = `${sec('1 — Résumé dossier')}
+<ul>
+  <li><strong>${prenom} ${nom}</strong>, ${age} ans, ${sit}, ${prof} ${S.d}</li>
+  <li>Objectif : <strong>${obj}</strong> ${S.d}</li>
+  <li>Patrimoine brut : <strong>${fmtK(totalActif)}</strong> · Net : <strong>${fmtK(actifNet)}</strong> ${S.c}</li>
+  <li>Structure : Immo ${immoR}% · Financier ${finaR}% ${S.c}</li>
+  <li>Endettement : <strong>${tauxEndettement}%</strong> · Liquidité : <strong>${ratioLiquidite}%</strong> ${S.c}</li>
+</ul>
+${sec('2 — Points manquants')}
+<ul>
+  <li>Avis d'imposition N-1 <span class="tag tag-red">P1</span> — calcul TMI et plafond PER ${S.h}</li>
+  ${actifs.av > 0 ? `<li>Relevé AV à jour (${fmtK(actifs.av)}) <span class="tag tag-blue">P2</span> — antériorité fiscale et clause bénéficiaire ${S.h}</li>` : ''}
+  ${actifs.loc > 0 ? `<li>Attestation valeur vénale biens locatifs <span class="tag tag-blue">P2</span> ${S.h}</li>` : ''}
+  <li>Clause bénéficiaire — rédaction actuelle à confirmer <span class="tag tag-blue">P2</span> ${S.h}</li>
+</ul>
+${sec('3 — Points d\'alerte')}
+<ul>${alerts.map(a => `<li class="cop-alert-item">${a}</li>`).join('')}</ul>
+${sec('4 — Opportunités à investiguer')}
+<ul>${ops.map(o => `<li>${o}</li>`).join('')}</ul>
+${sec('5 — Questions à poser en rendez-vous')}
+<ul>
+  ${obj.includes('retraite') || obj.includes('Retraite') ? '<li><span class="tag tag-blue">Retraite</span> Quel âge cible ? Revenus de remplacement estimés ?</li>' : ''}
+  <li><span class="tag tag-blue">Famille</span> Changements depuis le dernier entretien ? (mariage, naissance, héritage)</li>
+  <li><span class="tag tag-blue">Patrimoine</span> Projets d'investissement ou de cession à horizon 3 ans ?</li>
+  <li><span class="tag tag-blue">Fiscal</span> Versements déductibles optimisés cette année ?</li>
+  <li><span class="tag tag-blue">Transmission</span> Clauses bénéficiaires relues récemment ?</li>
+</ul>
+${sec('6 — Checklist conformité')}
+<ul>
+  <li>Questionnaire MIF2 connaissance & expérience — à confirmer ${S.h}</li>
+  <li>Rapport d'adéquation — à produire après séance ${S.h}</li>
+  <li>ABE DDA — à vérifier si acte assurance ${S.h}</li>
+  <li>KYC — justificatifs de domicile et identité à valider ${S.h}</li>
+</ul>
+${sec('7 — Hypothèses d\'impact commercial')}
+<ul>
+  ${actifs.per < 150 && age < 60 ? `<li>PER : potentiel versement avant plafond fiscal ${S.c}</li>` : ''}
+  ${actifNet > 800 ? `<li>Étude transmission / SCI IS — patrimoine net significatif ${S.h}</li>` : ''}
+  ${actifs.pea < 50 && totalActif > 300 ? `<li>PEA : enveloppe boursière non adressée ${S.c}</li>` : ''}
+  <li>Prévoyance décès/invalidité — couverture non documentée ${S.h}</li>
+</ul>
+<em style="font-size:11px;color:var(--text3)">Briefing sur base déclarative — validation conseiller requise avant toute préconisation.</em>`;
+    chat.innerHTML += `<div class="cop-msg ai"><div class="cop-avatar av-ai">✦</div><div class="cop-bubble">${brief}</div></div>`;
+    chat.scrollTop = chat.scrollHeight;
+  }, 1800 + Math.random() * 400);
+}
+
 // ===== BASE DE CONNAISSANCE (connaissance.md) =====
 const KB = {
   mif2: {
@@ -1799,136 +1996,231 @@ const KB = {
 };
 
 function copilotResponse(q, b) {
-  if (!b) return 'Aucun dossier chargé. Générez d\'abord un bilan dans l\'onglet <strong>Génération live</strong>, puis revenez ici.';
+  if (!b) return 'Aucun dossier chargé. Générez d\'abord un bilan dans l\'onglet <strong>Génération live</strong>, puis revenez ici — ou chargez un cas d\'exemple dans la sidebar.';
 
   const { prenom, nom, age, prof, obj, totalActif, actifNet, tauxEndettement, ratioLiquidite, actifs, sit } = b;
   const ql = q.toLowerCase();
+  const fmt = window._copFormat || 'court';
 
-  if (ql.includes('manque') || ql.includes('présentable') || ql.includes('complet')) {
-    const manques = [];
-    if (parseFloat(ratioLiquidite) < 5) manques.push('Justificatif de liquidités insuffisant — ratio à <strong>' + ratioLiquidite + '%</strong>, bien en-deçà du seuil de précaution');
-    manques.push('Avis d\'imposition N-1 à récupérer pour calcul précis du plafond PER');
-    if (actifs.av > 0) manques.push('Relevé de situation assurance-vie à jour (<strong>' + fmtK(actifs.av) + '</strong>)');
-    manques.push('Attestation de valeur vénale pour les biens locatifs — estimation à affiner');
-    return `Pour que le dossier <strong>${prenom} ${nom}</strong> soit présentable en séance, il manque :<ul>${manques.map(m => '<li>' + m + '</li>').join('')}</ul>Ces éléments n'empêchent pas le rendez-vous, mais leur absence fragilise l'analyse et la traçabilité.`;
-  }
+  // Utilitaires locaux
+  const src = (t, lbl) => `<span class="cop-src src-${t}">${lbl}</span>`;
+  const S = { d: src('decl','Déclaratif'), c: src('calc','Calcul'), k: src('kb','Base KB'), h: src('hyp','Hypothèse') };
+  const sec = t => `<div class="cop-section">${t}</div>`;
+  const disc = `<em style="font-size:11px;color:var(--text3)">Pistes à instruire — validation conseiller requise.</em>`;
 
-  if (ql.includes('risque') || ql.includes('opportunité')) {
-    const risks = [];
-    const ops = [];
-    if (parseFloat(tauxEndettement) > 35) risks.push('Endettement à <strong>' + tauxEndettement + '%</strong> — vigilance si hausse des taux ou baisse des revenus');
-    if ((actifs.rp + actifs.loc) / totalActif > 0.6) risks.push('Concentration immobilière forte (<strong>' + Math.round((actifs.rp + actifs.loc) / totalActif * 100) + '%</strong> du patrimoine) — liquidité et diversification à travailler');
-    risks.push('Absence de clause bénéficiaire optimisée sur l\'assurance-vie (' + sit + ')');
-    if (actifs.per < 150 && age < 60) ops.push('Plafond PER sous-utilisé — déduction fiscale disponible sur la TMI');
-    if (actifNet > 800) ops.push('Patrimoine net significatif (<strong>' + fmtK(actifNet) + '</strong>) — structuration juridique (SCI IS, démembrement) à envisager');
-    ops.push('Capacité d\'investissement complémentaire via l\'effet de levier — taux d\'endettement compatible');
-    return `<strong>3 risques identifiés :</strong><ul>${risks.slice(0,3).map(r => '<li>' + r + '</li>').join('')}</ul><strong>3 opportunités :</strong><ul>${ops.slice(0,3).map(o => '<li>' + o + '</li>').join('')}</ul>Ces éléments sont à valider par le conseiller en séance — ils constituent des pistes de travail, non des recommandations.`;
-  }
-
-  if (ql.includes('synthèse') || ql.includes('rdv') || ql.includes('rendez-vous') || ql.includes('6 ligne')) {
-    return `Synthèse préparation RDV — <strong>${prenom} ${nom}</strong><ul>
-      <li>${age} ans · ${sit} · ${prof} — patrimoine net <strong>${fmtK(actifNet)}</strong></li>
-      <li>Structure immobilière dominante (${Math.round((actifs.rp + actifs.loc) / totalActif * 100)}%) — profil de capitalisation établi</li>
-      <li>Endettement ${parseFloat(tauxEndettement) < 35 ? 'maîtrisé à ' + tauxEndettement + '%' : 'élevé à ' + tauxEndettement + '% — point de vigilance'}</li>
-      <li>Objectif déclaré : ${obj.toLowerCase()} — à mettre en adéquation avec la structure actuelle</li>
-      <li>${actifs.per < 150 && age < 60 ? 'PER sous-alimenté — opportunité fiscale immédiate' : 'PER correctement alimenté — maintenir les versements'}</li>
-      <li>Points à valider : clause bénéficiaire AV · justificatifs manquants · valorisation locatif</li>
+  // ──────────────────── RÉSUMÉ DOSSIER ────────────────────
+  if (ql.includes('résumé') || ql.includes('resume') || ql.includes('résume') || ql.includes('dossier') || ql.includes('source')) {
+    const immoR = Math.round((actifs.rp + actifs.loc) / totalActif * 100);
+    const finaR = Math.round((actifs.pea + actifs.av + actifs.per + actifs.ct) / totalActif * 100);
+    const base = `<ul>
+      <li><strong>${prenom} ${nom}</strong>, ${age} ans, ${sit}, ${prof} ${S.d}</li>
+      <li>Objectif : <strong>${obj}</strong> ${S.d}</li>
+      <li>Actif brut <strong>${fmtK(totalActif)}</strong> · Net <strong>${fmtK(actifNet)}</strong> · Passif <strong>${fmtK(totalActif - actifNet)}</strong> ${S.c}</li>
+      <li>Immo ${immoR}% · Financier ${finaR}% · Liquidité ${ratioLiquidite}% ${S.c}</li>
+      <li>Taux d'endettement : <strong>${tauxEndettement}%</strong> ${S.c}</li>
+    </ul>`;
+    if (fmt === 'court') return `${sec('Résumé dossier')}${base}`;
+    return `${sec('Résumé dossier')}${base}
+    ${sec('Sources exploitées')}
+    <ul>
+      <li>${S.d} Saisie conseiller — données client déclarées en formulaire</li>
+      <li>${S.c} Calculs internes — actif net, ratios, répartition</li>
+      <li>${S.h} Hypothèses structurelles — clause bénéficiaire, couverture, plafonds</li>
+      <li>${S.k} Base de connaissance — seuils réglementaires et fiscaux 2025</li>
     </ul>`;
   }
 
-  if (ql.includes('question') || ql.includes('poser') || ql.includes('séance') || ql.includes('verrouiller')) {
+  // ──────────────────── POINTS MANQUANTS ────────────────────
+  if (ql.includes('manque') || ql.includes('manquant') || ql.includes('incomplet') || ql.includes('complet') || ql.includes('présentable')) {
+    const m = [];
+    m.push(`Avis d'imposition N-1 <span class="tag tag-red">P1</span> — sans lui, impossible de calculer le plafond PER et la TMI ${S.h}`);
+    if (actifs.av > 0) m.push(`Relevé AV à jour (${fmtK(actifs.av)}) <span class="tag tag-blue">P2</span> — antériorité fiscale, UC détaillées, clause bénéficiaire ${S.h}`);
+    if (actifs.loc > 0) m.push(`Attestation valeur vénale biens locatifs (${fmtK(actifs.loc)}) <span class="tag tag-blue">P2</span> — estimation déclarative à consolider ${S.d}`);
+    m.push(`Clause bénéficiaire AV — rédaction actuelle à confirmer pour situation (${sit}) ${S.h}`);
+    if (parseFloat(ratioLiquidite) < 5) m.push(`Justificatif liquidités <span class="tag tag-red">P1</span> — ratio à <strong>${ratioLiquidite}%</strong>, très en-deçà du seuil de précaution (6 mois charges) ${S.c}`);
+    if (prof.includes('TNS') || prof.includes('entreprise')) m.push(`Bilan IS N-1 ou liasse fiscale — nécessaire pour calcul plafond PER TNS ${S.h}`);
+    const res = `${sec('Points manquants')}
+    <ul>${m.map(x => `<li>${x}</li>`).join('')}</ul>
+    <em style="font-size:11px;color:var(--text3)">Éléments absents fragilisant l'analyse et la traçabilité. Leur collecte avant séance est fortement recommandée.</em>`;
+    if (fmt === 'court') return res;
+    return res + `${sec('Impact conformité')}
+    <ul>
+      <li>Avis d'imposition et relevé AV : obligatoires pour un rapport d'adéquation MIF2 complet ${S.k}</li>
+      <li>Clause bénéficiaire : trace DDA si acte assurance ${S.k}</li>
+    </ul>`;
+  }
+
+  // ──────────────────── POINTS D'ALERTE ────────────────────
+  if (ql.includes('alerte') || ql.includes('vigilance') || ql.includes('risque') || ql.includes('zone d\'ombre')) {
+    const a = [];
+    if (parseFloat(tauxEndettement) > 35) a.push({ lbl: `Endettement <strong>${tauxEndettement}%</strong> — risque si hausse des taux ou perte de revenus`, src: S.c, lvl: 'red' });
+    if ((actifs.rp + actifs.loc) / totalActif > 0.6) a.push({ lbl: `Concentration immobilière <strong>${Math.round((actifs.rp + actifs.loc)/totalActif*100)}%</strong> — liquidité contrainte, diversification à travailler`, src: S.c, lvl: 'red' });
+    if (parseFloat(ratioLiquidite) < 5) a.push({ lbl: `Liquidité très faible <strong>${ratioLiquidite}%</strong> — vulnérabilité en cas d'imprévu`, src: S.c, lvl: 'red' });
+    if (actifNet > 1300) a.push({ lbl: `IFI potentiellement applicable — patrimoine net <strong>${fmtK(actifNet)}</strong> dépasse le seuil de 1,3 M€`, src: S.c, lvl: 'red' });
+    a.push({ lbl: `Clause bénéficiaire AV non vérifiée — risque de transmission sous-optimale pour situation ${sit}`, src: S.h, lvl: 'blue' });
+    if (age > 60 && actifs.per === 0) a.push({ lbl: `Aucun PER à ${age} ans — fenêtre de déduction fiscale à évaluer`, src: S.c, lvl: 'blue' });
+    const res = `${sec('Points d\'alerte')} <ul>${a.map(x => `<li class="${x.lvl === 'red' ? 'cop-alert-item' : ''}">${x.lbl} ${x.src}</li>`).join('')}</ul>`;
+    if (fmt === 'court') return res;
+    return res + `${sec('Recommandation')}
+    <ul>
+      <li>Alertes rouges : à traiter en priorité avant toute préconisation ${S.h}</li>
+      <li>Toute alerte réglementaire (IFI, clause bénéf.) nécessite validation juridique ${S.k}</li>
+    </ul>`;
+  }
+
+  // ──────────────────── OPPORTUNITÉS ────────────────────
+  if (ql.includes('opportunité') || ql.includes('piste') || ql.includes('commercial') || ql.includes('poche') || ql.includes('potentiel') || ql.includes('investiguer')) {
+    const ops = [];
+    if (actifs.per < 150 && age < 60) ops.push({ axe: 'Retraite', lbl: `PER sous-alimenté (${fmtK(actifs.per)}) — versement déductible à la TMI, plafond disponible sur avis d'imposition`, src: S.c });
+    if (actifNet > 800) ops.push({ axe: 'Transmission', lbl: `Patrimoine net ${fmtK(actifNet)} — structuration transmission à anticiper (SCI IS, donation, démembrement)`, src: S.c });
+    if ((actifs.rp + actifs.loc) / totalActif > 0.6) ops.push({ axe: 'Diversification', lbl: `Part immobilière ${Math.round((actifs.rp+actifs.loc)/totalActif*100)}% — rééquilibrage vers SCPI, ETF, AV UC`, src: S.h });
+    if (actifs.pea < 50 && totalActif > 300) ops.push({ axe: 'Fiscalité', lbl: `PEA absent ou marginal (${fmtK(actifs.pea)}) — enveloppe boursière défiscalisée non exploitée`, src: S.c });
+    ops.push({ axe: 'Protection', lbl: `Prévoyance décès/invalidité — niveau de couverture non documenté au regard des charges`, src: S.h });
+    if (actifs.av > 0 && (sit === 'Marié(e)' || sit === 'Pacsé(e)')) ops.push({ axe: 'Transmission', lbl: `Clause bénéficiaire AV à optimiser pour ${sit} — revue recommandée`, src: S.h });
+    const res = `${sec('Opportunités à investiguer (hypothèses à valider en séance)')}
+    <ul>${ops.map(o => `<li><span class="tag tag-navy">${o.axe}</span> ${o.lbl} ${o.src}</li>`).join('')}</ul>
+    ${disc}`;
+    if (fmt === 'court') return res;
+    return res + `${sec('Impact commercial estimé')}
+    <ul>
+      ${actifs.per < 150 && age < 60 ? `<li>PER : potentiel de versement avant plafond fiscal — rebond avant 31/12 ${S.h}</li>` : ''}
+      ${actifNet > 800 ? `<li>Étude juridique transmission / SCI — mission facturable haut de gamme ${S.h}</li>` : ''}
+      <li>Prévoyance : ouverture produit non adressée ${S.h}</li>
+    </ul>`;
+  }
+
+  // ──────────────────── QUESTIONS RDV ────────────────────
+  if (ql.includes('question') || ql.includes('poser') || ql.includes('séance') || ql.includes('préparer') || ql.includes('rendez-vous') || ql.includes('rdv')) {
     const qs = [];
-    if (obj.includes('retraite')) qs.push('Quel est votre horizon de départ envisagé, et avez-vous estimé vos revenus de remplacement ?');
-    qs.push('Votre situation familiale a-t-elle évolué depuis notre dernier entretien ? (mariage, naissance, héritage)');
-    qs.push('Avez-vous anticipé les droits de succession dans votre organisation patrimoniale actuelle ?');
-    if (parseFloat(tauxEndettement) > 30) qs.push('Le calendrier de remboursement de vos crédits est-il compatible avec votre projet ?');
-    qs.push('Avez-vous des projets d\'investissement ou de cession immobilière à horizon 3 ans ?');
-    qs.push('Votre taux marginal d\'imposition — avez-vous optimisé vos versements déductibles cette année ?');
-    return `Questions recommandées pour la séance avec <strong>${prenom} ${nom}</strong> :<ul>${qs.map(q => '<li>' + q + '</li>').join('')}</ul>Ces questions visent à compléter le dossier et à ancrer l'entretien sur les priorités du client.`;
+    if (obj.toLowerCase().includes('retraite')) qs.push({ th: 'Retraite', q: 'Quel âge de départ ciblez-vous ? Avez-vous estimé vos revenus de remplacement (retraite obligatoire + complémentaire) ?' });
+    qs.push({ th: 'Famille', q: 'Votre situation familiale a-t-elle évolué depuis notre dernier entretien ? (mariage, naissance, héritage, divorce)' });
+    qs.push({ th: 'Transmission', q: 'Avez-vous relu vos clauses bénéficiaires récemment ? Avez-vous anticipé la transmission de votre patrimoine ?' });
+    if (parseFloat(tauxEndettement) > 30) qs.push({ th: 'Financement', q: 'Le calendrier de remboursement de vos crédits est-il compatible avec votre projet d\'investissement ?' });
+    qs.push({ th: 'Projet', q: 'Avez-vous des projets d\'acquisition, de cession ou de travaux à horizon 3 ans ?' });
+    qs.push({ th: 'Fiscal', q: 'Avez-vous optimisé vos versements déductibles (PER, dons) avant la fin de l\'année fiscale ?' });
+    if (prof.includes('TNS') || prof.includes('entreprise')) qs.push({ th: 'Entreprise', q: 'Quelle est la quote-part rémunération / dividendes cette année ? Avez-vous une stratégie de sortie à terme ?' });
+    const res = `${sec(`Questions à poser en séance — ${prenom} ${nom}`)}
+    <ul>${qs.map(x => `<li><span class="tag tag-blue">${x.th}</span> ${x.q}</li>`).join('')}</ul>
+    <em style="font-size:11px;color:var(--text3)">Ces questions complètent le dossier et ancrent l'entretien sur les priorités client.</em>`;
+    return res;
   }
 
-  if (ql.includes('préconisation') || ql.includes('produit') || ql.includes('couverture')) {
-    return `Pistes à explorer pour <strong>${prenom} ${nom}</strong> (hypothèses à valider en séance) :<ul>
-      ${actifs.per < 150 && age < 60 ? '<li><strong>PER</strong> — effort de versement avant le 31/12, déduction sur TMI</li>' : ''}
-      ${actifNet > 1300 ? '<li><strong>Démembrement / SCI IS</strong> — optimisation IFI et transmission</li>' : ''}
-      <li><strong>Réorientation de l\'assurance-vie</strong> — rééquilibrage fonds euro / UC selon horizon</li>
-      <li><strong>Assurance prévoyance</strong> — vérifier la couverture décès/invalidité au regard des charges</li>
-      ${(actifs.rp + actifs.loc) / totalActif > 0.6 ? '<li><strong>Diversification</strong> — SCPI ou ETF pour rééquilibrer la part financière</li>' : ''}
-    </ul><em style="font-size:11px;color:var(--text3)">Ces pistes ne constituent pas des recommandations. Leur pertinence doit être validée par le conseiller habilité.</em>`;
+  // ──────────────────── CHECKLIST CONFORMITÉ ────────────────────
+  if (ql.includes('conformité') || ql.includes('checklist') || ql.includes('mif') || ql.includes('dda') || ql.includes('compliance')) {
+    const items = [
+      { lbl: 'Questionnaire connaissance & expérience MIF2', st: 'À confirmer', p: 'P1' },
+      { lbl: 'Rapport d\'adéquation — à produire après séance, avant tout acte', st: 'À produire', p: 'P1' },
+      { lbl: 'ABE DDA — si acte sur contrat d\'assurance', st: 'À vérifier', p: 'P2' },
+      { lbl: 'IPID / DIP remis et horodaté', st: 'À confirmer', p: 'P2' },
+      { lbl: 'Entretien annuel tracé dans le journal de conseil', st: 'À vérifier', p: 'P2' },
+      { lbl: 'KYC — identité et justificatif domicile à jour', st: 'À confirmer', p: 'P2' },
+      { lbl: 'Préférences ESG recueillies (3 dimensions)', st: 'À vérifier', p: 'P2' },
+    ];
+    const res = `${sec(`Checklist conformité — ${prenom} ${nom}`)}
+    <ul>${items.map(i => `<li><span class="tag tag-${i.p === 'P1' ? 'red' : 'blue'}">${i.p}</span> ${i.lbl} <span style="color:var(--text3);font-size:11px">→ ${i.st}</span> ${S.k}</li>`).join('')}</ul>
+    Consultez l'onglet <strong>Conformité dossiers</strong> pour les dates d'expiration et le statut documentaire.`;
+    if (fmt === 'court') return res;
+    return res + `${sec('Référentiels applicables')}
+    <ul>
+      <li>MIF2 : CMF Art. L. 541-1 et suivants — obligations CIF ${S.k}</li>
+      <li>DDA : Code des assurances Art. L. 511-1 — ABE, IPID, fiche conseil ${S.k}</li>
+      <li>LCB-FT : vigilance et traçabilité 5 ans après fin de relation ${S.k}</li>
+    </ul>`;
   }
 
-  if (ql.includes('conformité') || ql.includes('mif') || ql.includes('dda')) {
-    return `Points de conformité MIF2 à matérialiser pour <strong>${prenom} ${nom}</strong> :<ul>
-      <li>Document d\'adéquation — à produire après la séance, avant tout acte</li>
-      <li>Profil de risque — à reconfirmer si le délai dépasse 12 mois</li>
-      <li>Analyse des besoins et exigences DDA — obligatoire pour tout acte sur contrat d\'assurance</li>
-      <li>Entretien annuel — à tracer dans le journal d\'audit</li>
-    </ul>Consultez l\'onglet <strong>Conformité dossiers</strong> pour le détail de la checklist et les dates d\'expiration.`;
+  // ──────────────────── SYNTHÈSE RDV ────────────────────
+  if (ql.includes('synthèse') || ql.includes('6 ligne') || ql.includes('recap') || ql.includes('résumé rdv')) {
+    return `${sec(`Synthèse préparation RDV — ${prenom} ${nom}`)}
+    <ul>
+      <li>${S.d} ${age} ans · ${sit} · ${prof} — patrimoine net <strong>${fmtK(actifNet)}</strong></li>
+      <li>${S.c} Structure : immo ${Math.round((actifs.rp+actifs.loc)/totalActif*100)}% / financier ${Math.round((actifs.pea+actifs.av+actifs.per+actifs.ct)/totalActif*100)}% — profil de capitalisation établi</li>
+      <li>${S.c} Endettement ${parseFloat(tauxEndettement) < 35 ? 'maîtrisé à <strong>' + tauxEndettement + '%</strong>' : '<strong style="color:var(--red)">élevé à ' + tauxEndettement + '% — point de vigilance</strong>'}</li>
+      <li>${S.d} Objectif : <em>${obj}</em> — adéquation à valider en séance</li>
+      <li>${S.c} ${actifs.per < 150 && age < 60 ? 'PER sous-alimenté (' + fmtK(actifs.per) + ') — opportunité fiscale immédiate' : 'PER à ' + fmtK(actifs.per) + ' — vérifier plafond utilisé'}</li>
+      <li>${S.h} Points à valider : clause bénéficiaire AV · avis d'imposition · valorisation locatif</li>
+    </ul>`;
   }
 
-  // Réponses réglementaires générales issues de la base de connaissance
-  if (ql.includes('per') || ql.includes('retraite') || ql.includes('plafond')) {
-    return `<strong>PER — Plafonds de déduction (2025)</strong><ul>
+  // ──────────────────── KB RÉGLEMENTAIRE — PER ────────────────────
+  if (ql.includes('per ') || ql.includes('plafond per') || (ql.includes('retraite') && !ql.includes('question'))) {
+    const ctx = actifs.per < 150 && age < 60
+      ? `PER actuel ${fmtK(actifs.per)} — capacité de versement disponible avant plafond ${S.c}`
+      : `PER à ${fmtK(actifs.per)} — vérifier si plafond atteint ${S.c}`;
+    return `${sec('PER — Plafonds déduction 2025')} ${S.k}
+    <ul>
       <li>Salarié : ${KB.fiscalite.per.plafondSalarie}</li>
-      <li>TNS / Chef d'entreprise : ${KB.fiscalite.per.plafondTNS}</li>
+      <li>TNS : ${KB.fiscalite.per.plafondTNS}</li>
       <li>Plancher : ${KB.fiscalite.per.plancher}</li>
+      <li>Décès avant retraite : abattement 152 500€/bénéficiaire (avant 70 ans)</li>
       <li>Déblocage anticipé : ${KB.fiscalite.per.deblocage}</li>
     </ul>
-    Pour <strong>${prenom} ${nom}</strong> (${prof}) : ${actifs.per < 150 && age < 60 ? `PER actuel à ${fmtK(actifs.per)} — capacity de versement disponible avant plafond` : `PER à ${fmtK(actifs.per)} — vérifier si le plafond est atteint`}.`;
+    <strong>${prenom} ${nom}</strong> (${prof}) : ${ctx}`;
   }
 
-  if (ql.includes('assurance-vie') || (ql.includes('av') && ql.includes('fiscal')) || ql.includes('clause bénéficiaire') || ql.includes('rachat')) {
-    return `<strong>Assurance-vie — Fiscalité</strong><ul>
+  // ──────────────────── KB — AV ────────────────────
+  if (ql.includes('assurance-vie') || ql.includes('clause bénéficiaire') || ql.includes('rachat') || (ql.includes('av') && ql.includes('fisc'))) {
+    return `${sec('Assurance-vie — Fiscalité 2025')} ${S.k}
+    <ul>
       <li>Avant 8 ans : ${KB.fiscalite.av.avant8ans}</li>
       <li>Après 8 ans : ${KB.fiscalite.av.apres8ans}</li>
       <li>Décès (hors conjoint) : ${KB.fiscalite.av.deces}</li>
       <li>Conjoint / PACS : ${KB.fiscalite.av.conjoint}</li>
     </ul>
-    Pour <strong>${prenom} ${nom}</strong> : AV à ${fmtK(actifs.av)}. ${sit === 'Marié(e)' || sit === 'Pacsé(e)' ? 'Conjoint exonéré — vérifier la rédaction de la clause bénéficiaire.' : 'Clause bénéficiaire à optimiser selon situation familiale.'}`;
+    <strong>${prenom} ${nom}</strong> : AV à ${fmtK(actifs.av)} ${S.d}. ${sit === 'Marié(e)' || sit === 'Pacsé(e)' ? 'Conjoint exonéré — vérifier la rédaction de la clause bénéficiaire.' : 'Clause bénéficiaire à optimiser selon situation familiale.'} ${S.h}`;
   }
 
+  // ──────────────────── KB — IFI ────────────────────
   if (ql.includes('ifi') || ql.includes('fortune immobilière') || ql.includes('impôt sur la fortune')) {
     const immoBrut = actifs.rp + actifs.loc + actifs.scpi;
-    return `<strong>IFI — Impôt sur la Fortune Immobilière</strong><ul>
-      <li>Seuil d'imposition : ${(KB.fiscalite.ifi.seuil / 1000).toLocaleString('fr-FR')} K€ de patrimoine immobilier net</li>
+    return `${sec('IFI — Impôt sur la Fortune Immobilière')} ${S.k}
+    <ul>
+      <li>Seuil : 1 300 K€ de patrimoine immobilier net au 1er janvier</li>
       <li>Barème : ${KB.fiscalite.ifi.bareme}</li>
       <li>Exonérations : ${KB.fiscalite.ifi.exonerations}</li>
       <li>Optimisations : ${KB.fiscalite.ifi.optimisations}</li>
     </ul>
-    Pour <strong>${prenom} ${nom}</strong> : immobilier brut estimé à ${fmtK(immoBrut)}. ${immoBrut > 1300 ? '<strong style="color:var(--red)">Seuil IFI potentiellement franchi</strong> — analyse approfondie du passif déductible requise.' : 'Seuil IFI non atteint à date.'}`;
+    <strong>${prenom} ${nom}</strong> : immobilier brut estimé à ${fmtK(immoBrut)} ${S.c}. ${immoBrut > 1300 ? '<strong style="color:var(--red)">Seuil IFI potentiellement franchi</strong> — analyse du passif déductible requise.' : 'Seuil IFI non atteint à date.'}`;
   }
 
+  // ──────────────────── KB — SUCCESSION ────────────────────
   if (ql.includes('succession') || ql.includes('donation') || ql.includes('transmission') || ql.includes('héritage') || ql.includes('dutreil')) {
-    return `<strong>Droits de succession & donation</strong><ul>
+    return `${sec('Succession & Donation')} ${S.k}
+    <ul>
       <li>Abattements : ${KB.fiscalite.succession.abattements}</li>
-      <li>Pacte Dutreil : ${KB.fiscalite.succession.dutreil}</li>
       <li>Don manuel exonéré : ${KB.fiscalite.succession.donManuel}</li>
+      <li>Pacte Dutreil : ${KB.fiscalite.succession.dutreil}</li>
     </ul>
-    Pour <strong>${prenom} ${nom}</strong> (${age} ans, ${sit}) : patrimoine net de ${fmtK(actifNet)} — la stratégie de transmission mérite d'être anticipée. ${age > 60 ? 'À cet âge, la fenêtre de donation avec abattement plein reste ouverte.' : 'Horizon de transmission à long terme — travail sur la structuration des actifs.'}`;
+    <strong>${prenom} ${nom}</strong> (${age} ans, ${sit}) : patrimoine net ${fmtK(actifNet)} ${S.c}. ${age > 60 ? 'Fenêtre de donation avec abattement plein encore ouverte — à instruire.' : 'Horizon long — travail sur la structuration juridique des actifs à engager.'} ${S.h}`;
   }
 
-  if (ql.includes('mif') || ql.includes('adéquation') || ql.includes('questionnaire') || ql.includes('rapport d\'adéquation')) {
-    return `<strong>MIF2 — Obligations d'adéquation</strong><ul>
-      <li>Mise à jour questionnaire : ${KB.mif2.suitability.delaiMaj}</li>
+  // ──────────────────── KB — MIF2 ────────────────────
+  if (ql.includes('adéquation') || ql.includes('questionnaire') || ql.includes('rapport d\'adéquation') || ql.includes('rétrocession')) {
+    return `${sec('MIF2 — Obligations CGP')} ${S.k}
+    <ul>
+      <li>Questionnaire : ${KB.mif2.suitability.delaiMaj}</li>
       <li>Conservation : ${KB.mif2.suitability.conservation}</li>
       <li>ESG : ${KB.mif2.suitability.esg}</li>
       <li>Frais ex-ante : ${KB.mif2.frais.exante}</li>
       <li>Relevé ex-post : ${KB.mif2.frais.expost}</li>
-      <li>Évolution RIS : ${KB.mif2.ris2025}</li>
+      <li>Évolution RIS 2026 : ${KB.mif2.ris2025}</li>
     </ul>`;
   }
 
+  // ──────────────────── KB — LCB-FT ────────────────────
   if (ql.includes('lcb') || ql.includes('blanchiment') || ql.includes('kyc') || ql.includes('tracfin') || ql.includes('ppe')) {
-    return `<strong>LCB-FT — Obligations anti-blanchiment</strong><ul>
+    return `${sec('LCB-FT — Anti-blanchiment')} ${S.k}
+    <ul>
       <li>Vigilance standard : ${KB.lcbft.vigilanceStandard}</li>
       <li>Vigilance renforcée : ${KB.lcbft.vigilanceRenforcee}</li>
       <li>TRACFIN : ${KB.lcbft.tracfin}</li>
-      <li>Conservation pièces : ${KB.lcbft.conservation}</li>
+      <li>Conservation : ${KB.lcbft.conservation}</li>
     </ul>`;
   }
 
-  if (ql.includes('dda') || ql.includes('assurance') && (ql.includes('formation') || ql.includes('distribution') || ql.includes('abe') || ql.includes('ipid'))) {
-    return `<strong>DDA — Distribution d'Assurances</strong><ul>
+  // ──────────────────── KB — DDA ────────────────────
+  if (ql.includes('dda') || (ql.includes('assurance') && (ql.includes('formation') || ql.includes('abe') || ql.includes('ipid')))) {
+    return `${sec('DDA — Distribution d\'Assurances')} ${S.k}
+    <ul>
       <li>ABE : ${KB.dda.abe}</li>
       <li>Formation continue : ${KB.dda.formation}</li>
       <li>IPID : ${KB.dda.ipid}</li>
@@ -1936,10 +2228,12 @@ function copilotResponse(q, b) {
     </ul>`;
   }
 
-  if (ql.includes('dora') || ql.includes('numérique') || ql.includes('ris ') || ql.includes('eltif') || ql.includes('lmnp') || ql.includes('évolution') || ql.includes('nouveauté') || ql.includes('2025')) {
-    return `<strong>Évolutions réglementaires 2024-2026</strong><ul>
+  // ──────────────────── KB — ÉVOLUTIONS ────────────────────
+  if (ql.includes('dora') || ql.includes('ris ') || ql.includes('eltif') || ql.includes('lmnp') || ql.includes('évolution') || ql.includes('nouveauté') || ql.includes('2025') || ql.includes('2026')) {
+    return `${sec('Évolutions réglementaires 2024-2026')} ${S.k}
+    <ul>
       <li><strong>DORA :</strong> ${KB.evolutions2025.dora}</li>
-      <li><strong>Retail Investment Strategy :</strong> ${KB.evolutions2025.ris}</li>
+      <li><strong>RIS :</strong> ${KB.evolutions2025.ris}</li>
       <li><strong>ESG :</strong> ${KB.evolutions2025.esg}</li>
       <li><strong>LMNP LF2025 :</strong> ${KB.evolutions2025.lmnp}</li>
       <li><strong>ELTIF 2 :</strong> ${KB.produits.eltif2}</li>
@@ -1947,25 +2241,28 @@ function copilotResponse(q, b) {
     </ul>`;
   }
 
-  if (ql.includes('scpi') || ql.includes('pierre-papier') || ql.includes('rendement')) {
-    return `<strong>SCPI</strong><ul>
-      <li>${KB.produits.scpi}</li>
-    </ul>
-    Pour <strong>${prenom} ${nom}</strong> : SCPI/OPCI à ${fmtK(actifs.scpi)} soit ${pct(actifs.scpi, totalActif)} du patrimoine.
-    ${actifs.scpi < totalActif * 0.1 ? 'Sous-pondération pierre-papier — potentiel de diversification.' : 'Position SCPI significative — vérifier la diversification géographique et sectorielle.'}`;
+  // ──────────────────── KB — SCPI ────────────────────
+  if (ql.includes('scpi') || ql.includes('pierre-papier') || ql.includes('rendement locatif')) {
+    return `${sec('SCPI')} ${S.k}
+    <ul><li>${KB.produits.scpi}</li></ul>
+    <strong>${prenom} ${nom}</strong> : SCPI/OPCI à ${fmtK(actifs.scpi)} (${pct(actifs.scpi, totalActif)}) ${S.c}. ${actifs.scpi < totalActif * 0.1 ? 'Sous-pondération pierre-papier — potentiel de diversification immobilière indirecte.' : 'Position SCPI significative — vérifier la diversification géographique et sectorielle.'}`;
   }
 
-  if (ql.includes('statut') || ql.includes('cif') || ql.includes('ias') || ql.includes('iobsp') || ql.includes('orias')) {
-    return `<strong>Statuts réglementaires CGP</strong><ul>
-      <li><strong>CIF :</strong> Régulateur ${KB.statuts.cif.regulateur} | RC min : ${KB.statuts.cif.rc}</li>
-      <li><strong>IAS Courtier :</strong> Régulateur ${KB.statuts.ias.regulateur} | Inscription : ${KB.statuts.ias.inscription} | RC min : ${KB.statuts.ias.rc}</li>
-      <li><strong>IOBSP :</strong> Régulateur ${KB.statuts.iobsp.regulateur} | Inscription : ${KB.statuts.iobsp.inscription} | Activités : ${KB.statuts.iobsp.activites}</li>
+  // ──────────────────── KB — STATUTS ────────────────────
+  if (ql.includes('statut') || ql.includes('cif') || ql.includes('ias') || ql.includes('iobsp') || ql.includes('orias') || ql.includes('rc pro')) {
+    return `${sec('Statuts réglementaires CGP')} ${S.k}
+    <ul>
+      <li><strong>CIF :</strong> ${KB.statuts.cif.regulateur} | RC : ${KB.statuts.cif.rc}</li>
+      <li><strong>IAS Courtier :</strong> ACPR | ORIAS | RC : ${KB.statuts.ias.rc}</li>
+      <li><strong>IOBSP :</strong> ACPR | ORIAS | Crédit immo, conso, paiement</li>
+      <li>Renouvellement ORIAS : avant le 31 octobre chaque année</li>
     </ul>`;
   }
 
-  return `Je n'ai pas de réponse spécifique pour cette question sur le dossier <strong>${prenom} ${nom}</strong>.<br><br>
-  Thèmes couverts par la base de connaissance : MIF2, adéquation, rétrocessions, DDA, LCB-FT, statuts CGP, PER, assurance-vie, IFI, succession, SCPI, LMNP, évolutions 2024-2026.<br><br>
-  Essayez un des prompts rapides à gauche ou reformulez votre question.`;
+  // ──────────────────── FALLBACK ────────────────────
+  return `Je n'ai pas de réponse spécifique pour "<em>${q}</em>" sur le dossier <strong>${prenom} ${nom}</strong>.<br><br>
+  Thèmes disponibles : <strong>résumé · points manquants · alertes · opportunités · questions RDV · conformité · PER · AV · IFI · succession · MIF2 · DDA · LCB-FT · SCPI · statuts · évolutions 2025</strong><br><br>
+  Essayez un prompt rapide à gauche, le <strong>Briefing complet</strong>, ou reformulez.`;
 }
 
 // ===== CONFORMITÉ =====

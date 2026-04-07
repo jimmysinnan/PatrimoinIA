@@ -1,0 +1,91 @@
+[
+  {
+    "id": "case_001",
+    "title": "Préparation retraite couple CSP+",
+    "input": {
+      "client": {
+        "age": 52,
+        "situation": "marié",
+        "objectif": "préparer la retraite"
+      },
+      "assets": {
+        "residence_principale_ke": 650,
+        "immo_locatif_ke": 380,
+        "assurance_vie_ke": 290,
+        "titres_ke": 180,
+        "liquidites_ke": 85,
+        "per_ke": 95
+      },
+      "debts": {
+        "credit_rp_ke": 180,
+        "credit_investissement_ke": 220
+      },
+      "missing": ["relevé détaillé assurance-vie", "situation retraite obligatoire"]
+    },
+    "expected": {
+      "alerts": [
+        "Concentration immobilière à analyser",
+        "Données retraite incomplètes"
+      ],
+      "opportunities": [
+        "Réévaluer l'effort retraite et le PER",
+        "Analyser diversification financière"
+      ],
+      "questions_for_meeting": [
+        "Quel âge cible de départ en retraite ?",
+        "Quel niveau de revenus cible à la retraite ?"
+      ]
+    }
+  },
+  {
+    "id": "case_002",
+    "title": "Dirigeant avec forte trésorerie personnelle",
+    "input": {
+      "client": {
+        "profil": "chef d'entreprise",
+        "objectif": "optimiser fiscalité"
+      },
+      "assets": {
+        "liquidites_ke": 420,
+        "assurance_vie_ke": 80,
+        "pea_ke": 0,
+        "per_ke": 20
+      },
+      "missing": ["avis d'imposition", "revenus du foyer", "rémunération/dividendes"]
+    },
+    "expected": {
+      "alerts": [
+        "Surliquidité potentielle non arbitrée",
+        "Fiscalité impossible à qualifier sans données revenus"
+      ],
+      "opportunities": [
+        "Explorer enveloppes fiscales adaptées",
+        "Préparer une allocation de trésorerie cible"
+      ]
+    }
+  },
+  {
+    "id": "case_003",
+    "title": "Dossier incomplet avant rendez-vous",
+    "input": {
+      "client": {
+        "objectif": "transmettre le patrimoine"
+      },
+      "documents_received": ["pièce d'identité", "tableau patrimonial partiel"],
+      "documents_missing": ["avis d'imposition", "clause bénéficiaire", "encours de crédits"]
+    },
+    "expected": {
+      "missing_items": [
+        "Avis d'imposition N-1",
+        "Rédaction actuelle des clauses bénéficiaires",
+        "Tableau d'amortissement ou encours de dettes"
+      ],
+      "compliance_checklist": [
+        "Identité: OK",
+        "Objectif client: OK",
+        "Connaissance patrimoniale: INCOMPLÈTE",
+        "Pièces justificatives: INCOMPLÈTES"
+      ]
+    }
+  }
+]

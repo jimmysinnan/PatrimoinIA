@@ -1,0 +1,70 @@
+assistant_scope:
+  positioning: "Copilot interne de préparation patrimoniale pour CGP"
+  in_scope:
+    - préparation de rendez-vous
+    - lecture et structuration des inputs client
+    - complétude dossier
+    - aide conformité opérationnelle
+    - détection d'opportunités commerciales à investiguer
+    - préparation de synthèses internes
+  out_of_scope:
+    - remplacement du CRM
+    - étude patrimoniale exhaustive type suite métier historique
+    - recommandation finale autonome
+    - validation juridique ou conformité finale
+
+data_sources:
+  - declaratif_client
+  - documents_extraits
+  - crm
+  - calcul_interne
+  - hypothese
+
+product_families:
+  epargne_liquide:
+    - livrets
+    - comptes_titres_tres_liquides
+    - comptes_a_terme
+  assurance_vie_capitalisation:
+    - assurance_vie_fonds_euros
+    - assurance_vie_unites_de_compte
+    - contrat_de_capitalisation
+  retraite:
+    - per_individuel
+    - per_entreprise
+    - dispositifs_retraite_existants
+  valeurs_mobilieres:
+    - compte_titres
+    - pea
+    - opcvm
+    - etf
+  immobilier:
+    - residence_principale
+    - locatif_nu
+    - lmnp
+    - scpi
+    - opci
+    - sci
+  prevoyance_protection:
+    - deces
+    - invalidite
+    - incapacité
+    - dependance
+  transmission:
+    - donation
+    - demembrement
+    - clause_beneficiaire
+    - assurance_vie_transmission
+  financement:
+    - credit_immobilier
+    - credit_investissement
+    - tresorerie_dirigeant
+
+standard_outputs:
+  - summary
+  - missing_items
+  - alerts
+  - opportunities
+  - questions_for_meeting
+  - compliance_checklist
+  - commercial_impact_hypotheses
