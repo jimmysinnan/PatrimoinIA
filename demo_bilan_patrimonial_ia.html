@@ -1249,14 +1249,14 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
       </div>
       <div class="cop-prompts">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:4px;">Sorties standard</div>
-        <button class="cop-prompt-btn" onclick="copSend('Résumé dossier avec sources')">📋 Résumé dossier</button>
-        <button class="cop-prompt-btn" onclick="copSend('Quels éléments manquent pour compléter ce dossier ?')">📂 Points manquants</button>
-        <button class="cop-prompt-btn" onclick="copSend('Quels sont les points d\'alerte sur ce dossier ?')">⚠ Points d\'alerte</button>
-        <button class="cop-prompt-btn" onclick="copSend('Quelles opportunités patrimoniales à investiguer ?')">💡 Opportunités</button>
+        <button class="cop-prompt-btn" onclick="copSend('Résumé avec sources')">📋 Résumé dossier</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quels éléments manquent ?')">📂 Points manquants</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quels sont les points d\'alerte ?')">⚠ Points d\'alerte</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quelles opportunités à investiguer ?')">💡 Opportunités</button>
         <div class="cop-sep"></div>
         <button class="cop-prompt-btn" onclick="copSend('Quelles questions préparer pour le rendez-vous ?')">❓ Questions RDV</button>
-        <button class="cop-prompt-btn" onclick="copSend('Checklist conformité MIF2 et DDA sur ce dossier ?')">✔ Checklist conformité</button>
-        <button class="cop-prompt-btn" onclick="copSend('Impact commercial et poches non adressées du dossier ?')">📈 Impact commercial</button>
+        <button class="cop-prompt-btn" onclick="copSend('Checklist conformité MIF2 et DDA')">✔ Checklist conformité</button>
+        <button class="cop-prompt-btn" onclick="copSend('Impact commercial et poches non adressées')">📈 Impact commercial</button>
       </div>
       <div class="cop-cases">
         <div class="cop-cases-lbl">Cas d'exemple</div>
@@ -1812,7 +1812,7 @@ const TRAINING_CASES = [
     bilan: {
       prenom: 'Exemple', nom: 'Cas 1', age: 52, sit: 'Marié(e)', prof: 'Salarié(e) cadre', obj: 'Préparer la retraite',
       totalActif: 1680, totalPassif: 400, actifNet: 1280, tauxEndettement: '23.8', ratioLiquidite: '5.1',
-      actifs: { rp: 650, loc: 380, scpi: 0, pea: 110, av: 290, per: 95, ct: 70, liq: 85 },
+      actifs: { rp: 650, loc: 380, scpi: 0, tit: 180, av: 290, per: 95, liq: 85 },
       alertes: ['Concentration immobilière', 'Données retraite incomplètes'], now: new Date().toLocaleDateString('fr-FR')
     }
   },
@@ -1821,7 +1821,7 @@ const TRAINING_CASES = [
     bilan: {
       prenom: 'Exemple', nom: 'Cas 2', age: 46, sit: 'Marié(e)', prof: "Chef d'entreprise / TNS", obj: 'Optimiser ma fiscalité',
       totalActif: 1020, totalPassif: 0, actifNet: 1020, tauxEndettement: '0', ratioLiquidite: '41.2',
-      actifs: { rp: 350, loc: 0, scpi: 0, pea: 0, av: 80, per: 20, ct: 150, liq: 420 },
+      actifs: { rp: 350, loc: 0, scpi: 0, tit: 150, av: 80, per: 20, liq: 420 },
       alertes: ['Surliquidité non arbitrée', 'PEA absent', 'Données revenus manquantes'], now: new Date().toLocaleDateString('fr-FR')
     }
   },
@@ -1830,7 +1830,7 @@ const TRAINING_CASES = [
     bilan: {
       prenom: 'Exemple', nom: 'Cas 3', age: 68, sit: 'Veuf/Veuve', prof: 'Retraité(e)', obj: 'Transmettre mon patrimoine',
       totalActif: 1950, totalPassif: 0, actifNet: 1950, tauxEndettement: '0', ratioLiquidite: '3.2',
-      actifs: { rp: 900, loc: 650, scpi: 120, pea: 0, av: 220, per: 0, ct: 0, liq: 60 },
+      actifs: { rp: 900, loc: 650, scpi: 120, tit: 0, av: 220, per: 0, liq: 60 },
       alertes: ['Liquidité très faible', 'IFI potentiellement applicable', 'Succession non structurée'], now: new Date().toLocaleDateString('fr-FR')
     }
   }
@@ -1865,7 +1865,7 @@ function briefingComplet() {
     const S = { d: src('decl','Déclaratif'), c: src('calc','Calcul'), k: src('kb','Base KB'), h: src('hyp','Hypothèse') };
     const sec = t => `<div class="cop-section">${t}</div>`;
     const immoR = Math.round((actifs.rp + actifs.loc) / totalActif * 100);
-    const finaR = Math.round((actifs.pea + actifs.av + actifs.per + actifs.ct) / totalActif * 100);
+    const finaR = Math.round(((actifs.pea||0) + actifs.av + actifs.per + (actifs.tit||0)) / totalActif * 100);
     const alerts = [];
     if (parseFloat(tauxEndettement) > 35) alerts.push(`Endettement élevé <strong>${tauxEndettement}%</strong> ${S.c}`);
     if ((actifs.rp + actifs.loc) / totalActif > 0.6) alerts.push(`Concentration immobilière forte <strong>${immoR}%</strong> ${S.c}`);
@@ -1876,7 +1876,7 @@ function briefingComplet() {
     if (actifs.per < 150 && age < 60) ops.push(`PER sous-alimenté (${fmtK(actifs.per)}) — déduction fiscale disponible ${S.c}`);
     if (actifNet > 800) ops.push(`Structuration transmission à anticiper — patrimoine net ${fmtK(actifNet)} ${S.c}`);
     if ((actifs.rp + actifs.loc) / totalActif > 0.6) ops.push(`Diversification financière (SCPI, ETF, AV UC) ${S.h}`);
-    if (actifs.pea < 50 && totalActif > 300) ops.push(`PEA absent ou marginal (${fmtK(actifs.pea)}) — enveloppe fiscale à alimenter ${S.c}`);
+    if ((actifs.pea||0) < 50 && totalActif > 300) ops.push(`PEA absent ou marginal (${fmtK(actifs.pea||0)}) — enveloppe fiscale à alimenter ${S.c}`);
     ops.push(`Prévoyance décès/invalidité — niveau de couverture à documenter ${S.h}`);
     const brief = `${sec('1 — Résumé dossier')}
 <ul>
@@ -1916,7 +1916,7 @@ ${sec('7 — Hypothèses d\'impact commercial')}
 <ul>
   ${actifs.per < 150 && age < 60 ? `<li>PER : potentiel versement avant plafond fiscal ${S.c}</li>` : ''}
   ${actifNet > 800 ? `<li>Étude transmission / SCI IS — patrimoine net significatif ${S.h}</li>` : ''}
-  ${actifs.pea < 50 && totalActif > 300 ? `<li>PEA : enveloppe boursière non adressée ${S.c}</li>` : ''}
+  ${(actifs.pea||0) < 50 && totalActif > 300 ? `<li>PEA : enveloppe boursière non adressée ${S.c}</li>` : ''}
   <li>Prévoyance décès/invalidité — couverture non documentée ${S.h}</li>
 </ul>
 <em style="font-size:11px;color:var(--text3)">Briefing sur base déclarative — validation conseiller requise avant toute préconisation.</em>`;
@@ -2009,9 +2009,9 @@ function copilotResponse(q, b) {
   const disc = `<em style="font-size:11px;color:var(--text3)">Pistes à instruire — validation conseiller requise.</em>`;
 
   // ──────────────────── RÉSUMÉ DOSSIER ────────────────────
-  if (ql.includes('résumé') || ql.includes('resume') || ql.includes('résume') || ql.includes('dossier') || ql.includes('source')) {
+  if (ql.includes('résumé') || ql.includes('resume') || ql.includes('résume') || ql.includes('source')) {
     const immoR = Math.round((actifs.rp + actifs.loc) / totalActif * 100);
-    const finaR = Math.round((actifs.pea + actifs.av + actifs.per + actifs.ct) / totalActif * 100);
+    const finaR = Math.round(((actifs.pea||0) + actifs.av + actifs.per + (actifs.tit||0)) / totalActif * 100);
     const base = `<ul>
       <li><strong>${prenom} ${nom}</strong>, ${age} ans, ${sit}, ${prof} ${S.d}</li>
       <li>Objectif : <strong>${obj}</strong> ${S.d}</li>
@@ -2074,7 +2074,7 @@ function copilotResponse(q, b) {
     if (actifs.per < 150 && age < 60) ops.push({ axe: 'Retraite', lbl: `PER sous-alimenté (${fmtK(actifs.per)}) — versement déductible à la TMI, plafond disponible sur avis d'imposition`, src: S.c });
     if (actifNet > 800) ops.push({ axe: 'Transmission', lbl: `Patrimoine net ${fmtK(actifNet)} — structuration transmission à anticiper (SCI IS, donation, démembrement)`, src: S.c });
     if ((actifs.rp + actifs.loc) / totalActif > 0.6) ops.push({ axe: 'Diversification', lbl: `Part immobilière ${Math.round((actifs.rp+actifs.loc)/totalActif*100)}% — rééquilibrage vers SCPI, ETF, AV UC`, src: S.h });
-    if (actifs.pea < 50 && totalActif > 300) ops.push({ axe: 'Fiscalité', lbl: `PEA absent ou marginal (${fmtK(actifs.pea)}) — enveloppe boursière défiscalisée non exploitée`, src: S.c });
+    if ((actifs.pea||0) < 50 && totalActif > 300) ops.push({ axe: 'Fiscalité', lbl: `PEA absent ou marginal (${fmtK(actifs.pea||0)}) — enveloppe boursière défiscalisée non exploitée`, src: S.c });
     ops.push({ axe: 'Protection', lbl: `Prévoyance décès/invalidité — niveau de couverture non documenté au regard des charges`, src: S.h });
     if (actifs.av > 0 && (sit === 'Marié(e)' || sit === 'Pacsé(e)')) ops.push({ axe: 'Transmission', lbl: `Clause bénéficiaire AV à optimiser pour ${sit} — revue recommandée`, src: S.h });
     const res = `${sec('Opportunités à investiguer (hypothèses à valider en séance)')}
@@ -2133,7 +2133,7 @@ function copilotResponse(q, b) {
     return `${sec(`Synthèse préparation RDV — ${prenom} ${nom}`)}
     <ul>
       <li>${S.d} ${age} ans · ${sit} · ${prof} — patrimoine net <strong>${fmtK(actifNet)}</strong></li>
-      <li>${S.c} Structure : immo ${Math.round((actifs.rp+actifs.loc)/totalActif*100)}% / financier ${Math.round((actifs.pea+actifs.av+actifs.per+actifs.ct)/totalActif*100)}% — profil de capitalisation établi</li>
+      <li>${S.c} Structure : immo ${Math.round((actifs.rp+actifs.loc)/totalActif*100)}% / financier ${Math.round(((actifs.pea||0)+actifs.av+actifs.per+(actifs.tit||0))/totalActif*100)}% — profil de capitalisation établi</li>
       <li>${S.c} Endettement ${parseFloat(tauxEndettement) < 35 ? 'maîtrisé à <strong>' + tauxEndettement + '%</strong>' : '<strong style="color:var(--red)">élevé à ' + tauxEndettement + '% — point de vigilance</strong>'}</li>
       <li>${S.d} Objectif : <em>${obj}</em> — adéquation à valider en séance</li>
       <li>${S.c} ${actifs.per < 150 && age < 60 ? 'PER sous-alimenté (' + fmtK(actifs.per) + ') — opportunité fiscale immédiate' : 'PER à ' + fmtK(actifs.per) + ' — vérifier plafond utilisé'}</li>
