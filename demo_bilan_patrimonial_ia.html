@@ -968,6 +968,23 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .audit-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
 .audit-txt { color: var(--text2); line-height: 1.4; }
 .audit-actor { color: var(--text3); font-size: 11px; margin-top: 1px; }
+
+/* ===== INFOBULLE GLOBALE ===== */
+#_tip {
+  display: none; position: fixed; z-index: 9999;
+  background: var(--navy); color: #fff;
+  font-family: var(--sans); font-size: 12px; font-weight: 400; line-height: 1.6;
+  padding: 9px 13px; border-radius: 9px; max-width: 290px;
+  pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+  white-space: pre-line; border: 1px solid rgba(255,255,255,0.08);
+}
+#_tip::before {
+  content: ''; position: absolute; top: -5px; left: 14px;
+  width: 10px; height: 10px; background: var(--navy);
+  transform: rotate(45deg); border-top: 1px solid rgba(255,255,255,0.08);
+  border-left: 1px solid rgba(255,255,255,0.08);
+}
+[data-tip] { cursor: help; }
 </style>
 </head>
 <body>
@@ -981,18 +998,18 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
     </div>
   </div>
   <div class="header-pills">
-    <span class="hpill">MIF2 conforme</span>
-    <span class="hpill">Claude API</span>
-    <span class="hpill">Make</span>
-    <span class="hpill gold"><div class="gpulse"></div>IA active</span>
+    <span class="hpill" data-tip="Cet outil respecte les obligations MIF2 : questionnaire d'adéquation, rapport de conseil, relevé de frais ex-post, traçabilité des recommandations.">MIF2 conforme</span>
+    <span class="hpill" data-tip="Moteur IA : Claude (Anthropic) — analyse les données patrimoniales et génère les synthèses narratives personnalisées.">Claude API</span>
+    <span class="hpill" data-tip="Make (ex-Integromat) : automatise les flux entre le formulaire client, l'IA et les livrables (bilan PDF, email, CRM).">Make</span>
+    <span class="hpill gold" data-tip="L'assistant IA est connecté et opérationnel. En version production, cet indicateur reflète l'état de la connexion à l'API."><div class="gpulse"></div>IA active</span>
   </div>
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="sw('gen', this)">⚡ Génération live</button>
-  <button class="tab" onclick="sw('scenario', this)">⚙ Scénario technique</button>
-  <button class="tab" onclick="sw('conformite', this)">✓ Conformité dossiers</button>
-  <button class="tab" onclick="sw('copilot', this)">✦ Copilot IA</button>
+  <button class="tab active" onclick="sw('gen', this)" data-tip="Saisissez les données client et générez instantanément un bilan patrimonial complet avec analyse IA, score de complétude et synthèse narrative.">⚡ Génération live</button>
+  <button class="tab" onclick="sw('scenario', this)" data-tip="Visualisez le pipeline technique : comment les données transitent de Make vers l'IA puis vers le livrable final. Utile pour comprendre l'architecture de l'outil.">⚙ Scénario technique</button>
+  <button class="tab" onclick="sw('conformite', this)" data-tip="Tableau de bord conformité réglementaire : suivi MIF2 / DDA de chaque dossier client, alertes d'expiration documentaire, audit trail horodaté.">✓ Conformité dossiers</button>
+  <button class="tab" onclick="sw('copilot', this)" data-tip="Assistant conversationnel : posez des questions libres sur le dossier ou utilisez les sorties standard (résumé, alertes, opportunités, conformité...).">✦ Copilot IA</button>
 </div>
 
 <div class="main">
@@ -1005,28 +1022,28 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
     <div class="form-card">
       <div class="fc-head">
         <div class="fc-title">Fiche client</div>
-        <div class="fc-badge">Données simulées</div>
+        <div class="fc-badge" data-tip="Les données pré-remplies sont fictives et servent à la démonstration. En production, elles proviennent du CRM ou de la saisie conseiller lors de l'entretien.">Données simulées</div>
       </div>
       <div class="fc-body">
 
         <div class="fgrid">
           <div class="fg">
-            <label class="fl">Prénom</label>
+            <label class="fl" data-tip="Prénom du client — utilisé dans les titres du bilan et les formules de politesse de la synthèse narrative.">Prénom</label>
             <input class="fi" id="f-prenom" value="Philippe"/>
           </div>
           <div class="fg">
-            <label class="fl">Nom</label>
+            <label class="fl" data-tip="Nom de famille du client — permet d'identifier le dossier et de personnaliser le bilan.">Nom</label>
             <input class="fi" id="f-nom" value="Marchand"/>
           </div>
         </div>
 
         <div class="fgrid">
           <div class="fg">
-            <label class="fl">Âge</label>
+            <label class="fl" data-tip="L'âge influe sur les plafonds PER, les abattements AV, la fenêtre de défiscalisation, et les stratégies de transmission (donation, démembrement).">Âge</label>
             <input class="fi" id="f-age" type="number" value="52"/>
           </div>
           <div class="fg">
-            <label class="fl">Situation</label>
+            <label class="fl" data-tip="La situation familiale détermine l'exonération AV du conjoint, les abattements successoraux, le régime matrimonial et la clause bénéficiaire optimale.">Situation</label>
             <select class="fs" id="f-sit">
               <option>Marié(e)</option>
               <option>Pacsé(e)</option>
@@ -1038,7 +1055,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
         </div>
 
         <div class="fg">
-          <label class="fl">Profession</label>
+          <label class="fl" data-tip="Le statut professionnel modifie les plafonds PER (TNS jusqu'à ~85 780€ vs salarié ~37 680€), les produits adaptés et la fiscalité des revenus.">Profession</label>
           <select class="fs" id="f-prof">
             <option>Chef d'entreprise</option>
             <option>Cadre supérieur</option>
@@ -1050,7 +1067,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
         </div>
 
         <div class="fg">
-          <label class="fl">Objectif principal</label>
+          <label class="fl" data-tip="L'objectif oriente toute l'analyse : Retraite → PER et effort d'épargne · Fiscalité → enveloppes déductibles · Transmission → AV + donation · Revenus → SCPI, locatif · Protection → prévoyance.">Objectif principal</label>
           <select class="fs" id="f-obj">
             <option>Préparer la retraite</option>
             <option>Optimiser la fiscalité</option>
@@ -1062,46 +1079,46 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 
         <!-- ACTIF -->
         <div class="actifs-section">
-          <div class="as-head">Actif brut (K€)</div>
+          <div class="as-head" data-tip="Total des biens détenus, hors dettes. Exprimé en milliers d'euros (K€). La somme donne l'actif brut total utilisé pour calculer les ratios de structure patrimoniale.">Actif brut (K€)</div>
           <div class="as-row">
             <div class="as-dot" style="background:#1a2f4e"></div>
-            <div class="as-lbl">Résidence principale</div>
+            <div class="as-lbl" data-tip="Valeur vénale estimée de la résidence principale. Bénéficie d'un abattement IFI de 30%. Actif non générateur de revenus, non transmissible hors succession sauf démembrement.">Résidence principale</div>
             <input class="as-input" id="a-rp" value="650"/>
             <div class="as-unit">K€</div>
           </div>
           <div class="as-row">
             <div class="as-dot" style="background:#9a7c38"></div>
-            <div class="as-lbl">Immo locatif</div>
+            <div class="as-lbl" data-tip="Valeur vénale brute de l'immobilier locatif (appartements, maisons, parkings). Génère des revenus fonciers imposables. Entrer la valeur de marché, pas le prix d'achat.">Immo locatif</div>
             <input class="as-input" id="a-loc" value="380"/>
             <div class="as-unit">K€</div>
           </div>
           <div class="as-row">
             <div class="as-dot" style="background:#2d6a4f"></div>
-            <div class="as-lbl">Assurance-vie</div>
+            <div class="as-lbl" data-tip="Encours total du ou des contrats d'assurance-vie (fonds euros + unités de compte). Fiscalité douce après 8 ans, hors succession via clause bénéficiaire. Pas de plafond de versement.">Assurance-vie</div>
             <input class="as-input" id="a-av" value="290"/>
             <div class="as-unit">K€</div>
           </div>
           <div class="as-row">
             <div class="as-dot" style="background:#4a3580"></div>
-            <div class="as-lbl">Portefeuille titres</div>
+            <div class="as-lbl" data-tip="Compte-titres ordinaire (CTO), PEA, actions, obligations, OPCVM hors AV. Entrer la valeur de marché au jour de la saisie. Fiscalité : PFU 30% sur les gains.">Portefeuille titres</div>
             <input class="as-input" id="a-tit" value="180"/>
             <div class="as-unit">K€</div>
           </div>
           <div class="as-row">
             <div class="as-dot" style="background:#c07020"></div>
-            <div class="as-lbl">SCPI / OPCI</div>
+            <div class="as-lbl" data-tip="Pierre-papier : Sociétés Civiles de Placement Immobilier (SCPI) et OPCI. Rendement moyen 2024 : 4,5–5,5% brut. Fiscalité revenus fonciers, sauf si détenus en AV.">SCPI / OPCI</div>
             <input class="as-input" id="a-scpi" value="120"/>
             <div class="as-unit">K€</div>
           </div>
           <div class="as-row">
             <div class="as-dot" style="background:#6b6457"></div>
-            <div class="as-lbl">Liquidités</div>
+            <div class="as-lbl" data-tip="Comptes courants, livrets (A, LDDS, LEP), comptes à terme. Un ratio liquidités / patrimoine total inférieur à 5% est un signal de vigilance (moins de 6 mois de charges).">Liquidités</div>
             <input class="as-input" id="a-liq" value="85"/>
             <div class="as-unit">K€</div>
           </div>
           <div class="as-row">
             <div class="as-dot" style="background:#9b2335"></div>
-            <div class="as-lbl">PER / Épargne retraite</div>
+            <div class="as-lbl" data-tip="Plan d'Épargne Retraite (PER individuel, PERECO, PERO). Versements déductibles du revenu imposable. PASS 2025 : 47 100€. Plafond salarié : ~37 680€ / TNS : ~85 780€.">PER / Épargne retraite</div>
             <input class="as-input" id="a-per" value="95"/>
             <div class="as-unit">K€</div>
           </div>
@@ -1109,16 +1126,16 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 
         <!-- PASSIF -->
         <div class="actifs-section">
-          <div class="as-head">Passif (K€)</div>
+          <div class="as-head" data-tip="Total des dettes. Soustrait de l'actif brut pour obtenir le patrimoine net. Le taux d'endettement (passif / actif brut) est calculé automatiquement.">Passif (K€)</div>
           <div class="as-row">
             <div class="as-dot" style="background:#9b2335"></div>
-            <div class="as-lbl">Crédit immobilier RP</div>
+            <div class="as-lbl" data-tip="Capital restant dû (CRD) sur le crédit de la résidence principale. Déductible du calcul du patrimoine net. Non déductible de l'IFI (règle post-2018).">Crédit immobilier RP</div>
             <input class="as-input" id="p-rp" value="180"/>
             <div class="as-unit">K€</div>
           </div>
           <div class="as-row">
             <div class="as-dot" style="background:#c07020"></div>
-            <div class="as-lbl">Crédit investissement</div>
+            <div class="as-lbl" data-tip="Capital restant dû sur crédit(s) d'investissement locatif. Déductible de l'assiette IFI si le crédit finance un bien immobilier imposable.">Crédit investissement</div>
             <input class="as-input" id="p-inv" value="220"/>
             <div class="as-unit">K€</div>
           </div>
@@ -1126,28 +1143,28 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 
         <!-- Origine des données -->
         <div class="actifs-section">
-          <div class="as-head">Origine des données</div>
+          <div class="as-head" data-tip="Traçabilité de l'origine de chaque information. MIF2 exige que le conseiller documente la source de toutes les données utilisées dans l'analyse et le rapport d'adéquation.">Origine des données</div>
           <div style="padding:10px 12px;display:flex;flex-direction:column;gap:7px;">
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:12px;color:var(--text2)">Données personnelles</span>
-              <span class="origine-badge ob-saisie">Saisie conseiller</span>
+              <span class="origine-badge ob-saisie" data-tip="Informations saisies manuellement par le conseiller lors de l'entretien (identité, situation, objectifs).">Saisie conseiller</span>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:12px;color:var(--text2)">Actifs & passifs</span>
-              <span class="origine-badge ob-saisie">Saisie conseiller</span>
+              <span class="origine-badge ob-saisie" data-tip="Valorisations déclarées par le client ou saisies par le conseiller. À consolider avec les relevés officiels.">Saisie conseiller</span>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:12px;color:var(--text2)">Relevés & contrats</span>
-              <span class="origine-badge ob-doc">Document analysé</span>
+              <span class="origine-badge ob-doc" data-tip="Données extraites automatiquement par l'IA depuis des documents fournis (relevés AV, tableaux d'amortissement, avis d'imposition...).">Document analysé</span>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:12px;color:var(--text2)">Historique client</span>
-              <span class="origine-badge ob-crm">Import CRM</span>
+              <span class="origine-badge ob-crm" data-tip="Données synchronisées depuis le logiciel CRM du cabinet : historique des actes, contrats existants, contacts, dernière mise à jour.">Import CRM</span>
             </div>
           </div>
         </div>
 
-        <button class="gen-btn" id="gen-btn" onclick="generateBilan()">
+        <button class="gen-btn" id="gen-btn" onclick="generateBilan()" data-tip="Déclenche le pipeline complet : structuration → analyse IA → synthèse narrative → bilan PDF. Durée simulée : ~8 secondes. En production, le délai réel dépend de l'API Claude.">
           ✦ Générer le bilan patrimonial
         </button>
 
@@ -1242,27 +1259,27 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
         <div class="cop-stitle">Copilot PatrimonIA</div>
         <div class="cop-ssub">Assistant métier CGP · v2</div>
       </div>
-      <button class="cop-briefing-btn" onclick="briefingComplet()">✦ Briefing complet du dossier</button>
+      <button class="cop-briefing-btn" onclick="briefingComplet()" data-tip="Génère en un clic le briefing complet du dossier en 7 sections : résumé, points manquants, alertes, opportunités, questions RDV, checklist conformité, impact commercial. Format le plus complet de l'outil.">✦ Briefing complet du dossier</button>
       <div class="cop-format-row">
-        <button class="cop-fmt-btn active" id="fmt-court" onclick="toggleCopFormat('court')">Court</button>
-        <button class="cop-fmt-btn" id="fmt-complet" onclick="toggleCopFormat('complet')">Complet</button>
+        <button class="cop-fmt-btn active" id="fmt-court" onclick="toggleCopFormat('court')" data-tip="Format court : réponse condensée, aller à l'essentiel. Idéal en séance ou pour une consultation rapide.">Court</button>
+        <button class="cop-fmt-btn" id="fmt-complet" onclick="toggleCopFormat('complet')" data-tip="Format complet : réponse enrichie avec les référentiels réglementaires, les sources et les recommandations détaillées. Idéal pour préparer un rapport.">Complet</button>
       </div>
       <div class="cop-prompts">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:4px;">Sorties standard</div>
-        <button class="cop-prompt-btn" onclick="copSend('Résumé avec sources')">📋 Résumé dossier</button>
-        <button class="cop-prompt-btn" onclick="copSend('Quels éléments manquent ?')">📂 Points manquants</button>
-        <button class="cop-prompt-btn" onclick="copSend('Quels sont les points d\'alerte ?')">⚠ Points d\'alerte</button>
-        <button class="cop-prompt-btn" onclick="copSend('Quelles opportunités à investiguer ?')">💡 Opportunités</button>
+        <button class="cop-prompt-btn" onclick="copSend('Résumé avec sources')" data-tip="Synthèse identité + structure patrimoniale + ratios clés. Chaque information est sourcée : déclaratif, calcul interne, base réglementaire ou hypothèse.">📋 Résumé dossier</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quels éléments manquent ?')" data-tip="Liste les pièces et informations absentes qui fragilisent l'analyse ou la traçabilité. Classées P1 (bloquant) et P2 (recommandé).">📂 Points manquants</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quels sont les points d\'alerte ?')" data-tip="Signale les zones de risque : endettement élevé, concentration immobilière, liquidité insuffisante, seuil IFI, protection non documentée.">⚠ Points d'alerte</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quelles opportunités à investiguer ?')" data-tip="Pistes à explorer en séance : PER sous-alimenté, transmission, diversification, fiscalité, prévoyance. Ce sont des hypothèses à valider par le conseiller.">💡 Opportunités</button>
         <div class="cop-sep"></div>
-        <button class="cop-prompt-btn" onclick="copSend('Quelles questions préparer pour le rendez-vous ?')">❓ Questions RDV</button>
-        <button class="cop-prompt-btn" onclick="copSend('Checklist conformité MIF2 et DDA')">✔ Checklist conformité</button>
-        <button class="cop-prompt-btn" onclick="copSend('Impact commercial et poches non adressées')">📈 Impact commercial</button>
+        <button class="cop-prompt-btn" onclick="copSend('Quelles questions préparer pour le rendez-vous ?')" data-tip="Questions contextualisées adaptées au profil et à l'objectif du client : retraite, famille, transmission, financement, fiscalité.">❓ Questions RDV</button>
+        <button class="cop-prompt-btn" onclick="copSend('Checklist conformité MIF2 et DDA')" data-tip="Points réglementaires à matérialiser : rapport d'adéquation, ABE DDA, KYC, préférences ESG, entretien annuel. Classés P1 / P2 selon l'urgence.">✔ Checklist conformité</button>
+        <button class="cop-prompt-btn" onclick="copSend('Impact commercial et poches non adressées')" data-tip="Poches patrimoniales non couvertes et potentiel de rebond commercial : PEA absent, PER sous-utilisé, prévoyance non documentée, transmission à instruire.">📈 Impact commercial</button>
       </div>
       <div class="cop-cases">
-        <div class="cop-cases-lbl">Cas d'exemple</div>
-        <button class="cop-case-btn" onclick="loadCase(0)">Couple 52 ans · Retraite CSP+</button>
-        <button class="cop-case-btn" onclick="loadCase(1)">Dirigeant · Trésorerie 420 K€</button>
-        <button class="cop-case-btn" onclick="loadCase(2)">Dossier incomplet · Transmission</button>
+        <div class="cop-cases-lbl" data-tip="Cas d'entraînement prédéfinis issus de la base de données de l'agent pack. Permettent de tester l'outil sans générer un bilan depuis le formulaire.">Cas d'exemple</div>
+        <button class="cop-case-btn" onclick="loadCase(0)" data-tip="Couple 52 ans, objectif retraite, patrimoine 1 680 K€ (immobilier dominant). Cas type CSP+ avec concentration patrimoniale et PER sous-alimenté.">Couple 52 ans · Retraite CSP+</button>
+        <button class="cop-case-btn" onclick="loadCase(1)" data-tip="Chef d'entreprise avec 420 K€ de surliquidité non arbitrée. Problématique d'optimisation fiscale — TMI inconnue sans avis d'imposition.">Dirigeant · Trésorerie 420 K€</button>
+        <button class="cop-case-btn" onclick="loadCase(2)" data-tip="Client 68 ans, veuf, patrimoine 1 950 K€ non structuré. Succession non préparée, IFI potentiellement applicable, dossier conformité incomplet.">Dossier incomplet · Transmission</button>
       </div>
       <div class="cop-context">
         <span class="cop-ctx-dot"></span>
@@ -1280,7 +1297,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
         </div>
       </div>
       <div class="cop-input-wrap">
-        <input class="cop-input" id="cop-input" placeholder="Posez une question sur le dossier…" onkeydown="if(event.key==='Enter')copSend()"/>
+        <input class="cop-input" id="cop-input" placeholder="Posez une question sur le dossier… (ex: IFI applicable ? clause bénéficiaire ? plafond PER ?)" title="Saisie libre — posez n'importe quelle question sur le dossier ou sur la réglementation. Exemples : 'Quel est le plafond PER de ce client ?', 'Est-il concerné par l'IFI ?', 'Quelles obligations DDA s'appliquent ?'" onkeydown="if(event.key==='Enter')copSend()"/>
         <button class="cop-send" onclick="copSend()">Envoyer →</button>
       </div>
     </div>
@@ -1861,9 +1878,11 @@ function briefingComplet() {
     const el = document.getElementById(typingId);
     if (el) el.remove();
     const { prenom, nom, age, prof, obj, totalActif, actifNet, tauxEndettement, ratioLiquidite, actifs, sit } = b;
-    const src = (t, lbl) => `<span class="cop-src src-${t}">${lbl}</span>`;
+    const srcTips = { decl: 'Donnée déclarative : saisie par le conseiller ou déclarée par le client. À confirmer avec un justificatif.', calc: 'Donnée calculée : résultat d\'un calcul interne (ratio, total, pourcentage). Fiable si les données sources sont exactes.', kb: 'Source : base de connaissance réglementaire (connaissance.md). Lois de finances 2025, MIF2, DDA, LCB-FT.', hyp: 'Hypothèse de travail : supposé probable mais non confirmé. À valider en séance ou avec un document.' };
+    const src = (t, lbl) => `<span class="cop-src src-${t}" title="${srcTips[t]}">${lbl}</span>`;
     const S = { d: src('decl','Déclaratif'), c: src('calc','Calcul'), k: src('kb','Base KB'), h: src('hyp','Hypothèse') };
-    const sec = t => `<div class="cop-section">${t}</div>`;
+    const secTips = { '1 — Résumé dossier': 'Synthèse des données client : identité, structure patrimoniale, ratios. Sources explicitées.', '2 — Points manquants': 'Pièces et informations absentes du dossier. P1 = bloquant pour l\'analyse. P2 = recommandé.', '3 — Points d\'alerte': 'Zones de risque détectées automatiquement (endettement, concentration, IFI, protection).', '4 — Opportunités à investiguer': 'Pistes commerciales et patrimoniales à explorer en rendez-vous. Hypothèses à valider.', '5 — Questions à poser en rendez-vous': 'Questions contextualisées pour approfondir le dossier et ancrer l\'entretien.', '6 — Checklist conformité': 'Points réglementaires MIF2 / DDA à matérialiser avant et après chaque acte de conseil.', '7 — Hypothèses d\'impact commercial': 'Estimation du potentiel de rebond commercial sur les poches non adressées.', 'Résumé dossier': 'Synthèse données client avec sources explicitées.', 'Points manquants': 'Pièces et informations absentes du dossier.', 'Points d\'alerte': 'Zones de risque détectées automatiquement.', 'Opportunités à investiguer (hypothèses à valider en séance)': 'Pistes patrimoniales et commerciales à explorer.', 'Impact commercial estimé': 'Potentiel de rebond commercial sur les poches non adressées.', 'Checklist conformité': 'Points réglementaires à matérialiser avant et après chaque acte.', 'Sources exploitées': 'Origine de chaque information utilisée dans cette réponse.', 'Référentiels applicables': 'Textes de loi et règlements applicables au cas.', 'Recommandation': 'Recommandations de traitement des alertes identifiées.' };
+    const sec = t => `<div class="cop-section" title="${secTips[t] || ''}">${t}</div>`;
     const immoR = Math.round((actifs.rp + actifs.loc) / totalActif * 100);
     const finaR = Math.round(((actifs.pea||0) + actifs.av + actifs.per + (actifs.tit||0)) / totalActif * 100);
     const alerts = [];
@@ -2763,6 +2782,38 @@ function rs(i) {
     </div>
   `;
 }
+</script>
+
+<!-- ===== INFOBULLE GLOBALE ===== -->
+<div id="_tip"></div>
+<script>
+(function() {
+  const tip = document.getElementById('_tip');
+  let active = null;
+  document.addEventListener('mouseover', function(e) {
+    const el = e.target.closest('[data-tip]');
+    if (!el) return;
+    active = el;
+    tip.textContent = el.getAttribute('data-tip');
+    tip.style.display = 'block';
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!active) return;
+    const x = e.clientX + 16;
+    const y = e.clientY - 10;
+    const tw = tip.offsetWidth;
+    const th = tip.offsetHeight;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    tip.style.left = Math.min(x, vw - tw - 12) + 'px';
+    tip.style.top = (y - th < 8 ? e.clientY + 20 : y - th) + 'px';
+  });
+  document.addEventListener('mouseout', function(e) {
+    const el = e.target.closest('[data-tip]');
+    if (el) { active = null; tip.style.display = 'none'; }
+  });
+  document.addEventListener('click', function() { tip.style.display = 'none'; active = null; });
+})();
 </script>
 </body>
 </html>
